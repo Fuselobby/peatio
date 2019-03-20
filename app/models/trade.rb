@@ -15,8 +15,9 @@ class Trade < ActiveRecord::Base
 
   validates :price, :volume, :funds, numericality: { greater_than_or_equal_to: 0.to_d }
 
-  scope :h24, -> { where('created_at > ?', 24.hours.ago) }
+  scope :h24, -> { where('created_at > ?', 24.hours.ago) }  
 
+  scope :ordered, -> { order(funds: :desc) }
   after_commit on: :create do
     EventAPI.notify ['market', market_id, 'trade_completed'].join('.'), \
       Serializers::EventAPI::TradeCompleted.call(self)

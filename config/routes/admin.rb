@@ -4,6 +4,7 @@
 namespace :admin do
   get '/', to: 'dashboard#index', as: :dashboard
 
+  resources :analysts, except: %i[edit destroy]
   resources :markets, except: %i[edit destroy]
   resources :currencies, except: %i[edit destroy]
   resources :blockchains, except: %i[edit destroy]
@@ -24,4 +25,5 @@ namespace :admin do
 
   get :balance_sheet,  controller: 'accountings'
   get :income_statement, controller: 'accountings'
+  get :analysts_sheet, controller: 'analysts'
 end
