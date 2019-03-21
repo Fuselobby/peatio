@@ -1,6 +1,7 @@
 <div class="card">
   <div class="m-4 income_statement">
-    <%= form_tag admin_analysts_path, method: :get, class: "form-inline float-right" do |f| %>
+    Hot Trade
+    <%= form_tag admin_hot_trade_path, method: :get, class: "form-inline float-right" do |f| %>
       <div class="col">
         <%= text_field_tag :date_range, @date_range, class: "form-control", autocomplete: 'off' %>
         <%= submit_tag 'Search', class: "btn btn-primary" %>
@@ -14,12 +15,9 @@
 
 <div class="card">
   <%= table_for @trades, class: 'table table-condensed table-striped' do |t| %>
-    <% t.column 'Member' do |x| %>
-      <%= x[0][0]  %>
-    <% end %>
 
     <% t.column 'Symbol' do |x| %>
-      <%= x[0][1] %>
+      <%= x[0]%>
     <% end %>
 
     <% t.column 'Amount' do |x| %>

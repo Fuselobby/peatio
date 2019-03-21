@@ -26,4 +26,7 @@ namespace :admin do
   get :balance_sheet,  controller: 'accountings'
   get :income_statement, controller: 'accountings'
   get :analysts_sheet, controller: 'analysts'
+  get :hot_trade, controller: 'analysts'
+  get :top_spender, controller: 'analysts'
+  get :top_trader, controller: 'analysts'
 end

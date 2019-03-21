@@ -1,6 +1,7 @@
 <div class="card">
   <div class="m-4 income_statement">
-    <%= form_tag admin_analysts_path, method: :get, class: "form-inline float-right" do |f| %>
+    Top Spender
+    <%= form_tag admin_top_spender_path, method: :get, class: "form-inline float-right" do |f| %>
       <div class="col">
         <%= text_field_tag :date_range, @date_range, class: "form-control", autocomplete: 'off' %>
         <%= submit_tag 'Search', class: "btn btn-primary" %>
