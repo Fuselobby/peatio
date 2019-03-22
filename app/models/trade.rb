@@ -152,13 +152,14 @@ class Trade < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20190213104708
+# Schema version: 20190322095655
 #
 # Table name: trades
 #
 #  id            :integer          not null, primary key
 #  price         :decimal(32, 16)  not null
 #  volume        :decimal(32, 16)  not null
+#  volume_usd    :decimal(32, 16)
 #  ask_id        :integer          not null
 #  bid_id        :integer          not null
 #  trend         :integer          not null
@@ -166,6 +167,7 @@ end
 #  ask_member_id :integer          not null
 #  bid_member_id :integer          not null
 #  funds         :decimal(32, 16)  not null
+#  funds_usd     :decimal(32, 16)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
