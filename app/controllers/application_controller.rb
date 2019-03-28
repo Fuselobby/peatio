@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
     end
 
     # Bypass for local development
-    
+    Member.first
   end
   memoize :current_user
 
