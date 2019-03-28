@@ -25,6 +25,9 @@ class ApplicationController < ActionController::Base
       payload = authenticate!(token)
       Member.from_payload(payload)
     end
+
+    # Bypass for local development
+    
   end
   memoize :current_user
 
