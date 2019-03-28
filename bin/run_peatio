@@ -10,6 +10,9 @@ Dir.chdir APP_ROOT do
   puts "\n=== Copying config files ==="
   system 'bin/init_config'
 
+  puts "\n=== Bundle Install ==="
+  system 'bundle'
+
   puts "\n=== Install yarn packages ==="
   system 'bin/rake yarn:install'
 
@@ -24,4 +27,7 @@ Dir.chdir APP_ROOT do
 
   puts "\n=== Setup database ==="
   system 'bin/rake db:create db:migrate db:seed'
+
+  puts "\n=== Start Rails Server ==="
+  system 'JWT_PUBLIC_KEY=$(cat config/secrets/rsa-key.pub| base64 -w0) rails s'
 end
