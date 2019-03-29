@@ -52,4 +52,14 @@ namespace :seed do
       end
     end
   end
+
+  desc 'Adds missing members to database defined at config/seed/members.yml.'
+  task members: :environment do
+    Member.transaction do
+      YAML.load_file(Rails.root.join('config/seed/members.yml')).each do |hash|
+        next if Member.exists?(id: hash.fetch('id'))
+        Member.create!(hash)
+      end
+    end
+  end
 end
