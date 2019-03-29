@@ -90,6 +90,12 @@ Otherwise we advice to use [microkube based environment](#local-development-envi
 ```
 4. Start rails server `JWT_PUBLIC_KEY=$(cat config/secrets/rsa-key.pub| base64 -w0) rails s -b0.0.0.0`
 
+### Local development with microkube - Updated
+1. Make sure microkube is running to have the backend services ready
+2. Start peatio: ./bin/run_peatio
+3. If you hit any bundler error, delete the line 'BUNDLE WITH' along with its vesion in Gemfile.lock
+4. Run the peatio startup script again
+
 ### Local development environment with microkube:
 
 We suggest you to start using Peatio by installing [Microkube](https://github.com/rubykube/microkube).
