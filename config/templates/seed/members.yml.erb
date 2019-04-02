@@ -1,0 +1,9 @@
+<% if ENV['MEMBERS_CONFIG'] %>
+<%= File.read(ENV['MEMBERS_CONFIG']) %>
+<% else %>
+- id:             0
+  uid:            ID04E03B161E
+  email:          admin@local.io
+  level:          3
+  role:           admin
+  state:          active
