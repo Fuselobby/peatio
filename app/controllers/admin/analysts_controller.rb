@@ -26,9 +26,12 @@ module Admin
       db_trade = Trade.select('ask_member_id As ask_member_id', 'market_id As market_id')
       db_trade = db_trade.where('created_at > ?', created_at_from) if created_at_from.present?
       db_trade = db_trade.where('created_at < ?', created_at_to) if created_at_to.present?
+      db_trade = db_trade.where('market_id = ?', @market_id) if @market_id.present?
+       
       db_trade = db_trade.order('sum_funds desc') 
-      db_trade = db_trade.group(:ask_member_id, :market_id).limit(10) 
-      @trades = db_trade.sum(:funds) 
+      db_trade = db_trade.group(:ask_member_id, :market_id).limit(10)  
+      @trades = db_trade.sum(:funds)  
+      @market = Market.select(:id)
     end
 
 
@@ -39,6 +42,8 @@ module Admin
       db_trade = Trade.select('ask_member_id As ask_member_id', 'market_id As market_id')
       db_trade = db_trade.where('created_at > ?', created_at_from) if created_at_from.present?
       db_trade = db_trade.where('created_at < ?', created_at_to) if created_at_to.present?
+
+
       db_trade = db_trade.order('count_funds desc') 
       db_trade = db_trade.group(:ask_member_id, :market_id).limit(10) 
       @trades = db_trade.count(:funds) 
@@ -70,6 +75,13 @@ module Admin
                       + "-" \
                       + Date.today.strftime("%Y/%m/%d")
       end
+
+      if params[:market_id]
+        @market_id = params[:market_id]
+      else
+        @market_id = "" 
+      end
+
     end
 
   end

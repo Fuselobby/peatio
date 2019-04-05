@@ -3,6 +3,7 @@
     Hot Trade
     <%= form_tag admin_hot_trade_path, method: :get, class: "form-inline float-right" do |f| %>
       <div class="col">
+        <%= collection_select(:category, :id, Market.all, :id, :name, {}, {:class => 'form-control', :id=>'market_id', :name => 'market_id', :selected => @market_id}) %>
         <%= text_field_tag :date_range, @date_range, class: "form-control", autocomplete: 'off' %>
         <%= submit_tag 'Search', class: "btn btn-primary" %>
       </div>
@@ -14,6 +15,7 @@
 
 
 <div class="card">
+  <p style="padding:5px"><%= @market_id %></p>
   <%= table_for @trades, class: 'table table-condensed table-striped' do |t| %>
 
     <% t.column 'Symbol' do |x| %>
