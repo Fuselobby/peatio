@@ -29,6 +29,16 @@ module Admin
           @withdraw.process!
           @withdraw.dispatch!
           @withdraw.success!
+
+          recipient = "#{Member.find_by_id(@withdraw.member_id).email}"
+          from = ENV.fetch('EMAIL_SENDER')
+          memo = "#{@withdraw.amount} #{@withdraw.currency_id.upcase}"
+     
+          subject = "Withdrawal Approved"
+          content_type = "text/plain"
+          content = "The following withdrawal (Receipt ID: #{@withdraw.rid}) has been approved:\n#{memo}"
+
+          EmailClient::Sendgrid.new.email_notify(recipient, from, subject, content_type, content)
         end
         redirect_to :back, notice: 'Withdraw successfully updated!'
       end
