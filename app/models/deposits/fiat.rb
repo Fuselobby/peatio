@@ -3,28 +3,12 @@
 
 module Deposits
   class Fiat < Deposit
-  	include EmailClient
     has_one :blockchain, through: :currency
 
     validate { errors.add(:currency, :invalid) if currency && !currency.fiat? }
 
     def charge!
       with_lock { accept! }
-
-      recipient = member_email
-      from = ENV.fetch('EMAIL_SENDER')
-      memo = "#{amount} #{currency_id.upcase}"
- 
-      subject = "Deposit Approved"
-      content_type = "text/plain"
-      content = "The following deposit has been approved:\n#{memo}"
-
-      EmailClient::Sengrid.new.email_notify(recipient, from, subject, content_type, content)
-    end
-
-    private
-    def member_email
-    	"#{Member.find_by_id(member_id).email}"
     end
   end
 end
