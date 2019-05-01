@@ -38,38 +38,46 @@
         <% end %>
       </li>
 
-      <% if can? :manage, Blockchain %>
-        <li class="list-icon-item <%= check_active('blockchains') %>">
-          <%= link_to admin_blockchains_path do %>
-            <i class="icon fa fa-link"></i>
-            <span class="menu-text">Blockchains</span>
-          <% end %>
-        </li>
-      <% end %>
-
-      <li class="list-icon-item <%= check_active('currencies') %>">
-        <%= link_to admin_currencies_path do %>
-          <i class="icon fa fa-dollar-sign"></i>
-          <span class="menu-text">Currencies</span>
+      <% if !current_user.operator? %>
+        <% if can? :manage, Blockchain %>
+          <li class="list-icon-item <%= check_active('blockchains') %>">
+            <%= link_to admin_blockchains_path do %>
+              <i class="icon fa fa-link"></i>
+              <span class="menu-text">Blockchains</span>
+            <% end %>
+          </li>
         <% end %>
-      </li>
+      <% end %>
 
-      <% if can? :manage, Market %>
-        <li class="list-icon-item <%= check_active('markets') %>">
-          <%= link_to admin_markets_path do %>
-            <i class="icon fa fa-chart-line"></i>
-            <span class="menu-text">Markets</span>
+      <% if !current_user.operator? %>
+        <li class="list-icon-item <%= check_active('currencies') %>">
+          <%= link_to admin_currencies_path do %>
+            <i class="icon fa fa-dollar-sign"></i>
+            <span class="menu-text">Currencies</span>
           <% end %>
         </li>
       <% end %>
 
-      <% if can? :manage, Wallet %>
-        <li class="list-icon-item <%= check_active('wallets') %>">
-          <%= link_to admin_wallets_path do %>
-            <i class="icon fa fa-money-bill-wave"></i>
-            <span class="menu-text">Wallets</span>
-          <% end %>
-        </li>
+      <% if !current_user.operator? %>
+        <% if can? :manage, Market %>
+          <li class="list-icon-item <%= check_active('markets') %>">
+            <%= link_to admin_markets_path do %>
+              <i class="icon fa fa-chart-line"></i>
+              <span class="menu-text">Markets</span>
+            <% end %>
+          </li>
+        <% end %>
+      <% end %>
+
+      <% if !current_user.operator? %>
+        <% if can? :manage, Wallet %>
+          <li class="list-icon-item <%= check_active('wallets') %>">
+            <%= link_to admin_wallets_path do %>
+              <i class="icon fa fa-money-bill-wave"></i>
+              <span class="menu-text">Wallets</span>
+            <% end %>
+          </li>
+        <% end %>
       <% end %>
 
       <% if can? :menu, Deposit %>

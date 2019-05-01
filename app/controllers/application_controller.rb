@@ -27,9 +27,9 @@ class ApplicationController < ActionController::Base
     end
 
     # Bypass for local development
-    # if !Rails.env.production?
-    #   Member.first
-    # end
+    if !Rails.env.production?
+      Member.first
+    end
   end
   memoize :current_user
 
@@ -49,6 +49,10 @@ class ApplicationController < ActionController::Base
 
   def is_admin?
     current_user&.admin?
+  end
+
+  def is_operator?
+    current_user&.operator?
   end
 
   def set_gon
