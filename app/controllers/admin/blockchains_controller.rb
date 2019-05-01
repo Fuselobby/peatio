@@ -19,8 +19,10 @@ module Admin
     def create
       @blockchain = Blockchain.new(blockchain_params)
       if @blockchain.save
+        activity_record(user: current_user.id, action: 'create', result: 'succeed', topic: 'blockchains')
         redirect_to admin_blockchains_path
       else
+        activity_record(user: current_user.id, action: 'create', result: 'failed', topic: 'blockchains')
         flash[:alert] = @blockchain.errors.full_messages
         render :show
       end
@@ -29,8 +31,10 @@ module Admin
     def update
       @blockchain = Blockchain.find(params[:id])
       if @blockchain.update(blockchain_params)
+        activity_record(user: current_user.id, action: 'update', result: 'succeed', topic: 'blockchains')
         redirect_to admin_blockchains_path
       else
+        activity_record(user: current_user.id, action: 'update', result: 'failed', topic: 'blockchains')
         flash[:alert] = @blockchain.errors.full_messages
         redirect_to :back
       end

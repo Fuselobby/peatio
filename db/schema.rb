@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190213104708) do
+ActiveRecord::Schema.define(version: 20190501135106) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -24,6 +24,17 @@ ActiveRecord::Schema.define(version: 20190213104708) do
 
   add_index "accounts", ["currency_id", "member_id"], name: "index_accounts_on_currency_id_and_member_id", unique: true, using: :btree
   add_index "accounts", ["member_id"], name: "index_accounts_on_member_id", using: :btree
+
+  create_table "activities", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4,     null: false
+    t.string   "user_ip",    limit: 255,   null: false
+    t.string   "user_agent", limit: 255,   null: false
+    t.string   "topic",      limit: 255,   null: false
+    t.string   "action",     limit: 255,   null: false
+    t.string   "result",     limit: 255,   null: false
+    t.text     "data",       limit: 65535
+    t.datetime "created_at"
+  end
 
   create_table "assets", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false

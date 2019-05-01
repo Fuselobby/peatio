@@ -16,8 +16,10 @@ module Admin
       @market = Market.new
       @market.assign_attributes(market_params)
       if @market.save
+        activity_record(user: current_user.id, action: 'create', result: 'succeed', topic: 'markets')
         redirect_to admin_markets_path
       else
+        activity_record(user: current_user.id, action: 'create', result: 'failed', topic: 'markets')
         flash[:alert] = @market.errors.full_messages.first
         render :show
       end
@@ -30,8 +32,10 @@ module Admin
     def update
       @market = Market.find(params[:id])
       if @market.update(market_params)
+        activity_record(user: current_user.id, action: 'update', result: 'succeed', topic: 'markets')
         redirect_to admin_markets_path
       else
+        activity_record(user: current_user.id, action: 'update', result: 'failed', topic: 'markets')
         flash[:alert] = @market.errors.full_messages.first
         redirect_to :back
       end

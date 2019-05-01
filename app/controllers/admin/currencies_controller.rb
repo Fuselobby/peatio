@@ -16,8 +16,10 @@ module Admin
       @currency = Currency.new
       @currency.assign_attributes(currency_params)
       if @currency.save
+        activity_record(user: current_user.id, action: 'create', result: 'succeed', topic: 'currencies')
         redirect_to admin_currencies_path
       else
+        activity_record(user: current_user.id, action: 'create', result: 'failed', topic: 'currencies')
         flash[:alert] = @currency.errors.full_messages.first
         render :show
       end
@@ -30,8 +32,10 @@ module Admin
     def update
       @currency = Currency.find(params[:id])
       if @currency.update(currency_params)
+        activity_record(user: current_user.id, action: 'update', result: 'succeed', topic: 'currencies')
         redirect_to admin_currencies_path
       else
+        activity_record(user: current_user.id, action: 'update', result: 'failed', topic: 'currencies')
         flash[:alert] = @currency.errors.full_messages.first
         redirect_to :back
       end

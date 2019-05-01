@@ -159,4 +159,17 @@ class ApplicationController < ActionController::Base
       I18n.locale = locale if locale.present? && I18n.available_locales.include?(locale.to_sym)
     end
   end
+
+  def activity_record(options = {})
+    params = {
+      user_id:    options[:user],
+      user_ip:    request.ip,
+      user_agent: request.env['HTTP_USER_AGENT'],
+      topic:      options[:topic],
+      action:     options[:action],
+      result:     options[:result],
+      data:       options[:data]
+    }
+    Activity.create(params)
+  end
 end
