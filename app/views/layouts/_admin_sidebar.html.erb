@@ -38,7 +38,7 @@
         <% end %>
       </li>
 
-      <% if !current_user.operator? %>
+      <% if !current_user.admin? %>
         <% if can? :manage, Blockchain %>
           <li class="list-icon-item <%= check_active('blockchains') %>">
             <%= link_to admin_blockchains_path do %>
@@ -49,7 +49,7 @@
         <% end %>
       <% end %>
 
-      <% if !current_user.operator? %>
+      <% if !current_user.admin? %>
         <li class="list-icon-item <%= check_active('currencies') %>">
           <%= link_to admin_currencies_path do %>
             <i class="icon fa fa-dollar-sign"></i>
@@ -58,7 +58,7 @@
         </li>
       <% end %>
 
-      <% if !current_user.operator? %>
+      <% if !current_user.admin? %>
         <% if can? :manage, Market %>
           <li class="list-icon-item <%= check_active('markets') %>">
             <%= link_to admin_markets_path do %>
@@ -69,7 +69,7 @@
         <% end %>
       <% end %>
 
-      <% if !current_user.operator? %>
+      <% if !current_user.admin? %>
         <% if can? :manage, Wallet %>
           <li class="list-icon-item <%= check_active('wallets') %>">
             <%= link_to admin_wallets_path do %>
