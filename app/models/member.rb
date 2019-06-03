@@ -50,30 +50,32 @@ class Member < ActiveRecord::Base
   end
 
   def new_joiner_campaign
-    uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
-    req = Net::HTTP::Post.new(uri)
-    campaign_log_data = {
-      member_id: id,
-      audience_type: 'New Join',
-      campaign_type: 'Register'
-    }
-    req.set_form_data(campaign_log_data)
+    ActiveRecord::Base.transaction do
+      uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
+      req = Net::HTTP::Post.new(uri)
+      campaign_log_data = {
+        member_id: id,
+        audience_type: 'New Join',
+        campaign_type: 'Register'
+      }
+      req.set_form_data(campaign_log_data)
 
-    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.request(req)
-    end
-
-    case res
-    when Net::HTTPSuccess, Net::HTTPRedirection
-      @new_campaign_logs = JSON.parse(res.body)
-      if @new_campaign_logs.present?
-        @new_campaign_logs.each do |n|
-          currency = Currency.find_by(id: n["receive_currency"], enabled: true)
-          account = accounts.find_by(currency: currency)
-          account.plus_funds(n["receive_amount"].to_d) if account
-        end
+      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
       end
-    else
+
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        @new_campaign_logs = JSON.parse(res.body)
+        if @new_campaign_logs.present?
+          @new_campaign_logs.each do |n|
+            currency = Currency.find_by(id: n["receive_currency"], enabled: true)
+            account = accounts.find_by(currency: currency)
+            account.plus_funds(n["receive_amount"].to_d) if account
+          end
+        end
+      else
+      end
     end
   end
 
