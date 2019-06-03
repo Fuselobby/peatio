@@ -1,0 +1,6 @@
+<%= link_to url_for(sort_col: column, sort_dir: @sort_dir) do %>
+  <%= title %>
+  <% if params[:sort_col] == column %>
+    <i class="icon fa fa-<%= params[:sort_dir] == 'asc' ? 'chevron-up' : 'chevron-down' %>"></i>
+  <% end %>
+<% end %>

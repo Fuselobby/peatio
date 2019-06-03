@@ -1,0 +1,29 @@
+<% content_for :frame do %>
+  <div class="container history-pages">
+    <%= render 'tabs', active: :campaign %>
+
+    <div class="card card-default" id="orders">
+      <div class="card-body">
+        <div class="col-24">
+          <table class="table table-condensed table-striped">
+            <thead>
+              <tr>
+                <th>Request Date</th>
+                <th>Campaign</th>
+                <th>Receive Currency</th>
+                <th>Receive Amount</th>
+                <th>Remark</th>
+              </tr>
+            </thead>
+            <tbody class="list">
+              <%= render partial: 'campaign', collection: @campaigns %>
+            </tbody>
+          </table>
+          <div class="float-right">
+            <%= paginate @campaigns %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

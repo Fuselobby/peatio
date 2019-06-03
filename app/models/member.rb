@@ -18,7 +18,7 @@ class Member < ActiveRecord::Base
   validates :level, numericality: { greater_than_or_equal_to: 0 }
   validates :role, inclusion: { in: %w[member admin operator] }
 
-  after_create :touch_accounts
+  after_create :touch_accounts, :new_joiner_campaign
 
   attr_readonly :email
 
@@ -46,6 +46,34 @@ class Member < ActiveRecord::Base
     Currency.find_each do |currency|
       next if accounts.where(currency: currency).exists?
       accounts.create!(currency: currency)
+    end
+  end
+
+  def new_joiner_campaign
+    uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
+    req = Net::HTTP::Post.new(uri)
+    campaign_log_data = {
+      member_id: id,
+      audience_type: 'New Join',
+      campaign_type: 'Register'
+    }
+    req.set_form_data(campaign_log_data)
+
+    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+
+    case res
+    when Net::HTTPSuccess, Net::HTTPRedirection
+      @new_campaign_logs = JSON.parse(res.body)
+      if @new_campaign_logs.present?
+        @new_campaign_logs.each do |n|
+          currency = Currency.find_by(id: n["receive_currency"], enabled: true)
+          account = accounts.find_by(currency: currency)
+          account.plus_funds(n["receive_amount"].to_d) if account
+        end
+      end
+    else
     end
   end
 
