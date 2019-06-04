@@ -1,0 +1,41 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3><%= @campaign["campaign_name"] %></h3>
+  <div>
+    <%= link_to "Edit", edit_admin_campaign_path(@campaign["id"]), class: "btn btn-primary mr-1" %>
+    <%= link_to "Back", admin_campaigns_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="card card-primary">
+  <div class="card-header">
+    Campaign Details
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <strong class="col-sm-4 text-right">From</strong>
+      <dd class="col-sm-8"><%= Time.parse(@campaign["from_date"]) %><br></dd>
+      <strong class="col-sm-4 text-right">To</strong>
+      <dd class="col-sm-8"><%= Time.parse(@campaign["to_date"]) %><br></dd>
+      <strong class="col-sm-4 text-right">Campaign Name</strong>
+      <dd class="col-sm-8"><%= @campaign["campaign_name"] %><br></dd>
+      <strong class="col-sm-4 text-right">Campaign Type</strong>
+      <dd class="col-sm-8"><%= @campaign["campaign_type"] %><br></dd>
+      <strong class="col-sm-4 text-right">Audience Type</strong>
+      <dd class="col-sm-8"><%= @campaign["audience_type"] %><br></dd>
+      <strong class="col-sm-4 text-right">Reward Type</strong>
+      <dd class="col-sm-8"><%= @campaign["reward_type"] %><br></dd>
+      <strong class="col-sm-4 text-right">Reward Currency</strong>
+      <dd class="col-sm-8"><%= @campaign["reward_currency"] %><br></dd>
+      <strong class="col-sm-4 text-right">Reward Amount</strong>
+      <dd class="col-sm-8"><%= @campaign["reward_amount"] %><br></dd>
+      <strong class="col-sm-4 text-right">Calculation Type</strong>
+      <dd class="col-sm-8"><%= @campaign["calculation_type"] %><br></dd>
+      <strong class="col-sm-4 text-right">Description</strong>
+      <dd class="col-sm-8"><%= @campaign["description"] %><br></dd>
+      <strong class="col-sm-4 text-right">Status</strong>
+      <dd class="col-sm-8"><%= @campaign["status"] %><br></dd>
+      <strong class="col-sm-4 text-right">Data</strong>
+      <dd class="col-sm-8"><%= @campaign["option_data"] %><br></dd>
+    </dl>
+  </div>
+</div>
