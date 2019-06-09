@@ -34,36 +34,62 @@
         </div>
         <div class="col-sm-6">
           <div class="form-group">
-            <%= label_tag :campaign_type, 'Campaign Type' %>
-            <%= select_tag :campaign_type, options_for_select(@campaign_types, @campaign["campaign_type"]), class: "form-control" %>
+            <%= label_tag :audience_type, 'Audience Type' %>
+            <%= select_tag :audience_type, options_for_select(@audience_types, @campaign["audience_type"]), class: "form-control" %>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-sm-6">
           <div class="form-group">
-            <%= label_tag :audience_type, 'Audience Type' %>
-            <%= select_tag :audience_type, options_for_select(@audience_types, @campaign["audience_type"]), class: "form-control" %>
+            <%= label_tag :execution_type, 'Execution Type' %>
+            <%= select_tag :execution_type, options_for_select(@execution_types, @campaign["execution_type"]), class: "form-control" %>
           </div>
         </div>
+        <div class="col-sm-6">
+          <%= label_tag :frequency_interval, 'Execution Frequency(Only for schedule execution type)' %>
+          <div class="form-group">
+            <div class="row">
+              <div class="col-sm-6">
+                <%= number_field_tag :frequency_interval, @campaign["frequency_interval"], step: :any, min: 0, class: "form-control", placeholder: 'frequency interval, e.g. 10' %>
+              </div>
+              <div class="col-sm-6">
+                <%= select_tag :frequency_unit, options_for_select(@frequency_units, @campaign["frequency_unit"]), class: "form-control" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= label_tag :campaign_types, 'Campaign Types (You can select more than 1)' %><br>
+        <div class="row">
+          <% @campaign_types.each do |campaign_type| %>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+              <%= check_box_tag "campaign_types[]", campaign_type, @campaign["campaign_type"].include?(campaign_type) %>
+              <%= campaign_type %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-sm-6">
           <div class="form-group">
             <%= label_tag :reward_type, 'Reward Type' %>
             <%= select_tag :reward_type, options_for_select(@reward_types, @campaign["reward_type"]), class: "form-control" %>
           </div>
         </div>
-      </div>
-      <div class="row">
         <div class="col-sm-6">
           <div class="form-group">
-            <%= label_tag :reward_currency, 'Reward Currency' %>
-            <%= select_tag :reward_currency, options_for_select(@reward_currencies, @campaign["reward_currency"]), include_blank: "Select a reward currency", class: "form-control" %>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="form-group">
-            <%= label_tag :reward_amount, 'Reward Amount' %>
-            <%= number_field_tag :reward_amount, @campaign["reward_amount"], step: :any, class: "form-control" %>
+            <div class="row">
+              <div class="col-sm-6">
+                <%= label_tag :reward_currency, 'Reward Currency' %>
+                <%= select_tag :reward_currency, options_for_select(@reward_currencies, @campaign["reward_currency"]), class: "form-control" %>
+              </div>
+              <div class="col-sm-6">
+                <%= label_tag :reward_amount, 'Reward Amount' %>
+                <%= number_field_tag :reward_amount, @campaign["reward_amount"], step: :any, class: "form-control" %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -77,13 +103,23 @@
         <div class="col-sm-6">
           <div class="form-group">
             <%= label_tag :status %>
-            <%= select_tag :status, options_for_select(['ACTIVE', 'INACTIVE'], @campaign["status"]), include_blank: "Select a status", class: "form-control" %>
+            <%= select_tag :status, options_for_select(['ACTIVE', 'INACTIVE'], @campaign["status"]), class: "form-control" %>
           </div>
         </div>
       </div>
-      <div class="form-group">
-        <%= label_tag :description %>
-        <%= text_area_tag :description, @campaign["description"], size: "24x3", class: "form-control" %>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <%= label_tag :occurance %>
+            <%= select_tag :occurance, options_for_select(['true', 'false'], @campaign["occurance"]), class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <%= label_tag :description %>
+            <%= text_area_tag :description, @campaign["description"], size: "24x3", class: "form-control" %>
+          </div>
+        </div>
       </div>
       <%= submit_tag 'Submit', class: "btn btn-primary mt-3 float-right", data: {confirm: "Are you sure to update this campaign? The campaign will be triggered when it is active and fulfilled."} %>
     <% end %>

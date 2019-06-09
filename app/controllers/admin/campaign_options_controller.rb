@@ -22,7 +22,7 @@ module Admin
     end
 
     def new
-      @options_attributes = %i[table_name minimum].freeze
+      @options_attributes = %i[].freeze
       options = {}
       @build_options_schema = (options.keys - @options_attributes.map(&:to_s)) \
                                   .map{|v| [v, { title: v.to_s.humanize, format: "table"}]}.to_h
@@ -74,7 +74,7 @@ module Admin
       case res
       when Net::HTTPSuccess, Net::HTTPRedirection
         @campaign_option = JSON.parse(res.body)
-        @options_attributes = %i[table_name minimum].freeze
+        @options_attributes = %i[].freeze
         options = @campaign_option["json_data"] || {}
         @build_options_schema = (options.keys - @options_attributes.map(&:to_s)) \
                                     .map{|v| [v, { title: v.to_s.humanize, format: "table"}]}.to_h
