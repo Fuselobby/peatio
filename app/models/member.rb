@@ -56,7 +56,7 @@ class Member < ActiveRecord::Base
       campaign_log_data = {
         member_id: id,
         audience_type: 'New Join',
-        campaign_type: 'Register'
+        campaign_type: ['Register'].to_json
       }
       req.set_form_data(campaign_log_data)
 

@@ -8,12 +8,13 @@
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
-        <th><%= sort_link("Request Date", "request_date") %></th>
+        <th><%= sort_link("Date", "request_date") %></th>
         <th><%= sort_link("Campaign", "campaign_name") %></th>
-        <th><%= sort_link("Member ID", "member_id") %></th>
+        <th>Member</th>
         <th><%= sort_link("Receive Currency", "receive_currency") %></th>
         <th><%= sort_link("Receive Amount", "receive_amount") %></th>
         <th><%= sort_link("Remark", "remark") %></th>
+        <th><%= sort_link("Claimed?", "is_claimed") %></th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -39,6 +40,7 @@
           <td><%= campaign_log["receive_currency"] %></td>
           <td><%= campaign_log["receive_amount"] %></td>
           <td><%= campaign_log["remark"] %></td>
+          <td><%= campaign_log["is_claimed"] %></td>
           <td><%= link_to "View", admin_campaign_log_path(campaign_log["id"]) %></td>
         </tr>
       <% end %>

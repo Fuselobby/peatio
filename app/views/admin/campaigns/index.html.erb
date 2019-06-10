@@ -30,7 +30,7 @@
         <th><%= sort_link("Currency", "reward_currency") %></th>
         <th><%= sort_link("Amount", "reward_amount") %></th>
         <th><%= sort_link("Type", "calculation_type") %></th>
-        <th><%= sort_link("Occurance", "occurance") %></th>
+        <th><%= sort_link("Occurence", "occurence") %></th>
         <th><%= sort_link("Description", "description") %></th>
         <th><%= sort_link("Status", "status") %></th>
         <th>Actions</th>
@@ -58,7 +58,7 @@
           <td><%= campaign["reward_currency"] %></td>
           <td><%= campaign["reward_amount"] %></td>
           <td><%= campaign["calculation_type"] %></td>
-          <td><%= campaign["occurance"] %></td>
+          <td><%= campaign["occurence"] %></td>
           <td><%= campaign["description"] %></td>
           <td class="text-<%= campaign["status"] == 'ACTIVE' ? 'success' : 'danger' %>"><%= campaign["status"] %></td>
           <td><%= link_to "View", admin_campaign_path(campaign["id"]) %></td>
