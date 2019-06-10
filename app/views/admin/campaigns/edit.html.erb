@@ -54,7 +54,7 @@
                 <%= number_field_tag :frequency_interval, @campaign["frequency_interval"], step: :any, min: 0, class: "form-control", placeholder: 'frequency interval, e.g. 10' %>
               </div>
               <div class="col-sm-6">
-                <%= select_tag :frequency_unit, options_for_select(@frequency_units, @campaign["frequency_unit"]), class: "form-control" %>
+                <%= select_tag :frequency_unit, options_for_select(@frequency_units, @campaign["frequency_unit"]), include_blank: "Select a frequency unit", class: "form-control" %>
               </div>
             </div>
           </div>
