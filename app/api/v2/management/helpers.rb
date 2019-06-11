@@ -22,14 +22,20 @@ module API
               currency: currency,
             )
 
-            # Credit main fiat/crypto Revenue account.
-            ::Operations::Expense.credit!(
+            # Debit main fiat/crypto Expense account.
+            ::Operations::Expense.debit!(
               amount: amount,
               currency: currency,
             )
 
-            # Credit main fiat/crypto Liability account.
+            # Credit and debit main fiat/crypto Liability account.
             ::Operations::Liability.credit!(
+              amount: amount,
+              currency: currency,
+              member_id: member.id
+            )
+
+            ::Operations::Liability.debit!(
               amount: amount,
               currency: currency,
               member_id: member.id
