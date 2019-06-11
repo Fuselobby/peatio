@@ -72,6 +72,8 @@ class Member < ActiveRecord::Base
             currency = Currency.find_by(id: n["receive_currency"], enabled: true)
             account = accounts.find_by(currency: currency)
             account.plus_funds(n["receive_amount"].to_d) if account
+
+            record_complete_operations(n["receive_amount"].to_d, currency, self)
           end
         end
       else
