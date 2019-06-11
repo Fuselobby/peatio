@@ -14,6 +14,29 @@ module API
           end
         end
 
+        def record_complete_operations(amount, currency, member)
+          ActiveRecord::Base.transaction do
+            # Credit main fiat/crypto Asset account.
+            ::Operations::Asset.credit!(
+              amount: amount,
+              currency: currency,
+            )
+
+            # Credit main fiat/crypto Revenue account.
+            ::Operations::Expense.credit!(
+              amount: amount,
+              currency: currency,
+            )
+
+            # Credit main fiat/crypto Liability account.
+            ::Operations::Liability.credit!(
+              amount: amount,
+              currency: currency,
+              member_id: member.id
+            )
+          end
+        end
+
         private
 
         def create_platform_operation!(attrs)

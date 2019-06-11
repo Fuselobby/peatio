@@ -11,6 +11,7 @@ module API
 
         def before
           return if request.path == '/api/v2/management/swagger'
+          return if request.path == '/api/v2/management/accounts/add_rewards'
           check_request_method!
           check_query_parameters!
           check_content_type!
