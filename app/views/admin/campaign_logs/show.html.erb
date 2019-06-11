@@ -11,7 +11,7 @@
   </div>
   <div class="card-body">
     <dl class="row">
-      <strong class="col-sm-4 text-right">Request Date</strong>
+      <strong class="col-sm-4 text-right">Date</strong>
       <dd class="col-sm-8"><%= Time.parse(@campaign_log["request_date"]) %><br></dd>
       <strong class="col-sm-4 text-right">Campaign</strong>
       <dd class="col-sm-8">
@@ -20,7 +20,7 @@
           <i class="icon fa fa-link"></i>
         <% end %><br>
       </dd>
-      <strong class="col-sm-4 text-right">Member ID</strong>
+      <strong class="col-sm-4 text-right">Member</strong>
       <dd class="col-sm-8">
         <% if Member.find_by(id: @campaign_log["member_id"])%>
           <%= Member.find_by(id: @campaign_log["member_id"]).email %>
@@ -33,6 +33,8 @@
       <dd class="col-sm-8"><%= @campaign_log["receive_currency"] %><br></dd>
       <strong class="col-sm-4 text-right">Receive Amount</strong>
       <dd class="col-sm-8"><%= @campaign_log["receive_amount"] %><br></dd>
+      <strong class="col-sm-4 text-right">Claimed?</strong>
+      <dd class="col-sm-8"><%= @campaign_log["is_claimed"] %><br></dd>
       <strong class="col-sm-4 text-right">Remark</strong>
       <dd class="col-sm-8"><%= @campaign_log["remark"] %><br></dd>
     </dl>

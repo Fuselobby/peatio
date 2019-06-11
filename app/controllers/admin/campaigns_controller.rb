@@ -72,7 +72,7 @@ module Admin
         status: params[:status],
         frequency: frequency,
         execution_type: params[:execution_type],
-        occurance: params[:occurance]
+        occurence: params[:occurence]
       }
       req.set_form_data(campaign_data)
 
@@ -139,7 +139,7 @@ module Admin
         status: params[:status],
         frequency: frequency,
         execution_type: params[:execution_type],
-        occurance: params[:occurance]
+        occurence: params[:occurence]
       }
       req.set_form_data(campaign_data)
 
