@@ -54,7 +54,7 @@ class Member < ActiveRecord::Base
       uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
       req = Net::HTTP::Post.new(uri)
       campaign_log_data = {
-        member_id: id,
+        user_id: uid,
         audience_type: 'New Join',
         campaign_type: ['Register'].to_json
       }

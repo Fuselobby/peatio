@@ -4,7 +4,7 @@ module Admin
 
     def index
       uri = URI("http://campaign:8002/api/v1/campaign_logs")
-      params = { member_id: current_user.id }
+      params = { user_id: current_user.uid }
       uri.query = URI.encode_www_form(params)
 
       res = Net::HTTP.get_response(uri)
