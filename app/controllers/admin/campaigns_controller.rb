@@ -35,7 +35,7 @@ module Admin
       @execution_types = active_campaign_options.select{ |a| ["Execution Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @campaign_types = active_campaign_options.select{ |a| ["Campaign Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @audience_types = active_campaign_options.select{ |a| ["Audience Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
-      @reward_types = active_campaign_options.select{ |a| ["Reward Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
+      @reward_types = active_campaign_options.select{ |a| ["Incentive Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @calculation_types = active_campaign_options.select{ |a| ["Calculation Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @reward_currencies = Currency.where(enabled: true).distinct.pluck(:id).sort
       @frequency_units = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years']
@@ -112,7 +112,7 @@ module Admin
         @execution_types = active_campaign_options.select{ |a| ["Execution Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @campaign_types = active_campaign_options.select{ |a| ["Campaign Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @audience_types = active_campaign_options.select{ |a| ["Audience Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
-        @reward_types = active_campaign_options.select{ |a| ["Reward Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
+        @reward_types = active_campaign_options.select{ |a| ["Incentive Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @calculation_types = active_campaign_options.select{ |a| ["Calculation Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @reward_currencies = Currency.where(enabled: true).distinct.pluck(:id).sort
         @frequency_units = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years']

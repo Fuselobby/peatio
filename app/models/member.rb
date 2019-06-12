@@ -50,34 +50,39 @@ class Member < ActiveRecord::Base
   end
 
   def new_joiner_campaign
-    ActiveRecord::Base.transaction do
-      uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
-      req = Net::HTTP::Post.new(uri)
-      campaign_log_data = {
-        user_id: uid,
-        audience_type: 'New Join',
-        campaign_type: ['Register'].to_json
-      }
-      req.set_form_data(campaign_log_data)
+    begin
+      ActiveRecord::Base.transaction do
+        uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
+        req = Net::HTTP::Post.new(uri)
+        campaign_log_data = {
+          user_id: uid,
+          audience_type: 'New Join',
+          campaign_type: ['Register'].to_json
+        }
+        req.set_form_data(campaign_log_data)
 
-      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-        http.request(req)
-      end
-
-      case res
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        @new_campaign_logs = JSON.parse(res.body)
-        if @new_campaign_logs.present?
-          @new_campaign_logs.each do |n|
-            currency = Currency.find_by(id: n["receive_currency"], enabled: true)
-            account = accounts.find_by(currency: currency)
-            account.plus_funds(n["receive_amount"].to_d) if account
-
-            record_complete_operations(n["receive_amount"].to_d, currency, self)
-          end
+        res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+          http.request(req)
         end
-      else
+
+        case res
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          @new_campaign_logs = JSON.parse(res.body)
+          if @new_campaign_logs.present?
+            @new_campaign_logs.each do |n|
+              currency = Currency.find_by(id: n["receive_currency"], enabled: true)
+              account = accounts.find_by(currency: currency)
+              account.plus_funds(n["receive_amount"].to_d) if account
+
+              Account.record_complete_operations(n["receive_amount"].to_d, currency, self)
+            end
+          end
+        else
+        end
       end
+    rescue Exception => ex
+      puts ex.message
+      puts ex.backtrace.join("\n")
     end
   end
 
