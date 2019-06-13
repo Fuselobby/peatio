@@ -15,6 +15,7 @@
         <th><%= sort_link("Receive Amount", "receive_amount") %></th>
         <th><%= sort_link("Source Type", "source_type") %></th>
         <th><%= sort_link("Source ID", "source_id") %></th>
+        <th><%= sort_link("Source User ID", "source_user_id") %></th>
         <th><%= sort_link("Remark", "remark") %></th>
         <th><%= sort_link("Claimed?", "is_claimed") %></th>
         <th>Actions</th>
@@ -43,6 +44,7 @@
           <td><%= campaign_log["receive_amount"] %></td>
           <td><%= campaign_log["source_type"] %></td>
           <td><%= campaign_log["source_id"] %></td>
+          <td><%= campaign_log["source_user_id"] %></td>
           <td><%= campaign_log["remark"] %></td>
           <td><%= campaign_log["is_claimed"] %></td>
           <td><%= link_to "View", admin_campaign_log_path(campaign_log["id"]) %></td>
