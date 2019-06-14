@@ -74,7 +74,7 @@
       <div class="row">
         <div class="col-sm-6">
           <div class="form-group">
-            <%= label_tag :reward_type, 'Reward Type' %>
+            <%= label_tag :reward_type, 'Incentive Type' %>
             <%= select_tag :reward_type, options_for_select(@reward_types, @campaign["reward_type"]), class: "form-control" %>
           </div>
         </div>
@@ -82,11 +82,11 @@
           <div class="form-group">
             <div class="row">
               <div class="col-sm-6">
-                <%= label_tag :reward_currency, 'Reward Currency' %>
+                <%= label_tag :reward_currency, 'Incentive Currency' %>
                 <%= select_tag :reward_currency, options_for_select(@reward_currencies, @campaign["reward_currency"]), class: "form-control" %>
               </div>
               <div class="col-sm-6">
-                <%= label_tag :reward_amount, 'Reward Amount' %>
+                <%= label_tag :reward_amount, 'Incentive Amount' %>
                 <%= number_field_tag :reward_amount, @campaign["reward_amount"], step: :any, class: "form-control" %>
               </div>
             </div>

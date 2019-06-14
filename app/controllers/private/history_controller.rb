@@ -28,30 +28,12 @@ module Private
       @orders = current_user.orders.order("id desc").page(params[:page]).per(20)
     end
 
-    def campaigns
-      uri = URI("http://campaign:8002/api/v1/campaign_logs")
-      params = { user_id: current_user.uid }
-      uri.query = URI.encode_www_form(params)
-
-      res = Net::HTTP.get_response(uri)
-
-      case res
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        campaign_logs = JSON.parse(res.body)
-      else
-        campaign_logs = []
-      end
-
-      @campaigns = Kaminari.paginate_array(campaign_logs).page(params[:page]).per(20)
-    end
-
     private
 
     def tabs
       { order: ['header.order_history', order_history_path],
         trade: ['header.trade_history', trade_history_path],
-        account: ['header.account_history', account_history_path],
-        campaign: ['Campaign History', campaign_history_path]
+        account: ['header.account_history', account_history_path]
       }
     end
 

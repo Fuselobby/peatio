@@ -1,7 +1,5 @@
 module Admin
-  class RewardHistoriesController < BaseController
-    include Admin::CampaignHelper
-
+  class IncentiveHistoriesController < BaseController
     def index
       uri = URI("http://campaign:8002/api/v1/campaign_logs")
       params = { user_id: current_user.uid }
@@ -16,7 +14,7 @@ module Admin
         campaign_logs = []
       end
 
-      @campaigns = Kaminari.paginate_array(campaign_logs).page(params[:page]).per(20)
+      @campaigns = Kaminari.paginate_array(campaign_logs).page(params[:page]).per(10)
     end
 
   end

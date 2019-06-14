@@ -129,6 +129,35 @@ class Account < ActiveRecord::Base
       deposit_address: payment_address&.address,
       currency:        currency_id
   end
+
+  def self.record_complete_operations(amount, currency, member)
+    ActiveRecord::Base.transaction do
+      # Credit main fiat/crypto Asset account.
+      Operations::Asset.credit!(
+        amount: amount,
+        currency: currency,
+      )
+
+      # Debit main fiat/crypto Expense account.
+      Operations::Expense.debit!(
+        amount: amount,
+        currency: currency,
+      )
+
+      # Credit and debit main fiat/crypto Liability account.
+      Operations::Liability.credit!(
+        amount: amount,
+        currency: currency,
+        member_id: member.id
+      )
+
+      Operations::Liability.debit!(
+        amount: amount,
+        currency: currency,
+        member_id: member.id
+      )
+    end
+  end
 end
 
 # == Schema Information
