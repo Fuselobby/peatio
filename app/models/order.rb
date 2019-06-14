@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-class Order < ActiveRecord::Base
+class Order < ApplicationRecord
   include BelongsToMarket
   include BelongsToMember
 
@@ -9,7 +9,8 @@ class Order < ActiveRecord::Base
   InsufficientMarketLiquidity = Class.new(StandardError)
 
   extend Enumerize
-  enumerize :state, in: { wait: 100, done: 200, cancel: 0 }, scope: true
+  STATES = { pending: 0, wait: 100, done: 200, cancel: -100, reject: -200 }.freeze
+  enumerize :state, in: STATES, scope: true
 
   TYPES = %w[ market limit ]
   enumerize :ord_type, in: TYPES, scope: true
@@ -22,9 +23,11 @@ class Order < ActiveRecord::Base
   validates :origin_volume, numericality: { greater_than: 0 }
   validate  :market_order_validations, if: ->(order) { order.ord_type == 'market' }
 
-  WAIT   = 'wait'
-  DONE   = 'done'
-  CANCEL = 'cancel'
+  PENDING = 'pending'
+  WAIT    = 'wait'
+  DONE    = 'done'
+  CANCEL  = 'cancel'
+  REJECT  = 'reject'
 
   scope :done, -> { with_state(:done) }
   scope :active, -> { with_state(:wait) }
@@ -39,14 +42,49 @@ class Order < ActiveRecord::Base
 
   after_commit on: :update do
     next unless ord_type == 'limit'
-    event = case previous_changes.dig('state', 1)
+
+    event = case state
       when 'cancel' then 'order_canceled'
       when 'done'   then 'order_completed'
       else 'order_updated'
     end
 
-    EventAPI.notify ['market', market_id, event].join('.'), \
-      Serializers::EventAPI.const_get(event.camelize).call(self)
+    Serializers::EventAPI.const_get(event.camelize).call(self).tap do |payload|
+      EventAPI.notify ['market', market_id, event].join('.'), payload
+    end
+  end
+
+  class << self
+    def submit(id)
+      ActiveRecord::Base.transaction do
+        order = lock.find_by_id!(id)
+        return unless order.state == ::Order::PENDING
+
+        order.hold_account!.lock_funds!(order.locked)
+        order.record_submit_operations!
+        order.update!(state: ::Order::WAIT)
+
+        AMQPQueue.enqueue(:matching, action: 'submit', order: order.to_matching_attributes)
+      end
+    rescue => e
+      order = find_by_id!(id)
+      order.update!(state: ::Order::REJECT) if order
+      report_exception_to_screen(e)
+    end
+
+    def cancel(id)
+      ActiveRecord::Base.transaction do
+        order = lock.find_by_id!(id)
+        return unless order.state == ::Order::WAIT
+
+        order.hold_account!.unlock_funds!(order.locked)
+        order.record_cancel_operations!
+
+        order.update!(state: ::Order::CANCEL)
+      end
+    rescue => e
+      report_exception_to_screen(e)
+    end
   end
 
   def funds_used
@@ -176,7 +214,7 @@ end
 #  state          :integer          not null
 #  type           :string(8)        not null
 #  member_id      :integer          not null
-#  ord_type       :string           not null
+#  ord_type       :string(30)       not null
 #  locked         :decimal(32, 16)  default(0.0), not null
 #  origin_locked  :decimal(32, 16)  default(0.0), not null
 #  funds_received :decimal(32, 16)  default(0.0)

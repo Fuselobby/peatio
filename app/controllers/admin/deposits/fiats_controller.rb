@@ -7,9 +7,12 @@ module Admin
   module Deposits
     class FiatsController < BaseController
       def index
-        q = ::Deposits::Fiat.where(currency: currency).includes(:member, :currency)
-        @latest_deposits = q.where('created_at <= ?', 1.day.ago).order('id DESC')
-        @all_deposits    = q.where('created_at > ?', 1.day.ago).order('id DESC')
+        case params.fetch(:state, 'all')
+        when 'all'
+          @all_deposits = all_deposits
+        when 'latest'
+          @latest_deposits = latest_deposits
+        end
       end
 
       def new
@@ -18,7 +21,6 @@ module Admin
 
       def show
         @deposit = ::Deposits::Fiat.where(currency: currency).find(params[:id])
-        flash.now[:notice] = t('.notice') if @deposit.accepted?
       end
 
       def create
@@ -32,18 +34,19 @@ module Admin
       end
 
       def update
-        deposit = ::Deposits::Fiat.where(currency: currency).find(params[:id])
+        @deposit = ::Deposits::Fiat.where(currency: currency).find(params[:id])
         case params.fetch(:commit)
         when 'Accept'
-          deposit.charge!
+          @deposit.charge!
+          flash.keep[:notice] = "The recharge have been successful."
         when 'Reject'
-          deposit.reject!
+          @deposit.reject!
         end
-        redirect_to :back
+        @deposit.reload
+        render :show
       end
 
     private
-
       def deposit_params
         params.require(:deposits_fiat).slice(:uid, :amount)
               .merge(currency: currency)

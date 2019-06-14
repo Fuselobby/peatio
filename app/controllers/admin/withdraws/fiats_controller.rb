@@ -9,19 +9,15 @@ module Admin
       before_action :find_withdraw, only: [:show, :update, :destroy]
 
       def index
-        @latest_withdraws  = ::Withdraws::Fiat.where(currency: currency)
-                                              .where('created_at <= ?', 1.day.ago)
-                                              .order(id: :desc)
-                                              .includes(:member, :currency)
-        @all_withdraws     = ::Withdraws::Fiat.where(currency: currency)
-                                              .where('created_at > ?', 1.day.ago)
-                                              .order(id: :desc)
-                                              .includes(:member, :currency)
+        case params.fetch(:state, 'all')
+        when 'all'
+          @all_withdraws = all_withdraws
+        when 'latest'
+          @latest_withdraws = latest_withdraws
+        end
       end
 
-      def show
-
-      end
+      def show; end
 
       def update
         @withdraw.transaction do
@@ -30,12 +26,12 @@ module Admin
           @withdraw.dispatch!
           @withdraw.success!
         end
-        redirect_to :back, notice: 'Withdraw successfully updated!'
+        redirect_to admin_withdraw_path(currency.id, @withdraw.id), notice: 'Withdrawal successfully updated!'
       end
 
       def destroy
         @withdraw.reject!
-        redirect_to :back, notice: 'Withdraw successfully destroyed!'
+        redirect_to admin_withdraw_path(currency.id, @withdraw.id), notice: 'Withdrawal successfully destroyed!'
       end
     end
   end

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-class Trade < ActiveRecord::Base
+class Trade < ApplicationRecord
   include BelongsToMarket
   extend Enumerize
   ZERO = '0.0'.to_d
@@ -15,9 +15,8 @@ class Trade < ActiveRecord::Base
 
   validates :price, :volume, :funds, numericality: { greater_than_or_equal_to: 0.to_d }
 
-  scope :h24, -> { where('created_at > ?', 24.hours.ago) }  
+  scope :h24, -> { where('created_at > ?', 24.hours.ago) }
 
-  scope :ordered, -> { order(funds: :desc) }
   after_commit on: :create do
     EventAPI.notify ['market', market_id, 'trade_completed'].join('.'), \
       Serializers::EventAPI::TradeCompleted.call(self)
@@ -49,11 +48,11 @@ class Trade < ActiveRecord::Base
   end
 
   def for_global
-    { tid:    id,
-      type:   trend == 'down' ? 'sell' : 'buy',
-      date:   created_at.to_i,
-      price:  price.to_s || ZERO,
-      amount: volume.to_s || ZERO }
+    { tid:        id,
+      taker_type: ask_id > bid_id ? :sell : :buy,
+      date:       created_at.to_i,
+      price:      price.to_s || ZERO,
+      amount:     volume.to_s || ZERO }
   end
 
   def record_complete_operations!

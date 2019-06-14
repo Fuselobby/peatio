@@ -16,10 +16,8 @@ module Admin
       @currency = Currency.new
       @currency.assign_attributes(currency_params)
       if @currency.save
-        activity_record(user: current_user.id, action: 'create', result: 'succeed', topic: 'currencies')
         redirect_to admin_currencies_path
       else
-        activity_record(user: current_user.id, action: 'create', result: 'failed', topic: 'currencies')
         flash[:alert] = @currency.errors.full_messages.first
         render :show
       end
@@ -32,12 +30,10 @@ module Admin
     def update
       @currency = Currency.find(params[:id])
       if @currency.update(currency_params)
-        activity_record(user: current_user.id, action: 'update', result: 'succeed', topic: 'currencies')
         redirect_to admin_currencies_path
       else
-        activity_record(user: current_user.id, action: 'update', result: 'failed', topic: 'currencies')
         flash[:alert] = @currency.errors.full_messages.first
-        redirect_to :back
+        render :show
       end
     end
 
@@ -49,9 +45,12 @@ module Admin
           next unless whitelist.key?(param)
           whitelist[param] = whitelist[param].in?(['1', 'true', true])
         end
-        whitelist[:options] = params[:currency][:options].is_a?(String) ? \
-                                  JSON.parse(params[:currency][:options]) : params[:currency][:options] \
-                                  if params[:currency][:options]
+
+        if params[:currency][:options].is_a?(String)
+          whitelist[:options] = JSON.parse(params[:currency][:options])
+        elsif params[:currency][:options]
+          whitelist[:options] = params[:currency][:options].permit!
+        end
       end
     end
 

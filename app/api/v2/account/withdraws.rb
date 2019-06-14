@@ -14,7 +14,7 @@ module API
         params do
           optional :currency,
                    type: String,
-                   values: { value: -> { Currency.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
+                   values: { value: -> { Currency.coins.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
                    desc: 'Currency code.'
           optional :limit,
                    type: { value: Integer, message: 'account.withdraw.non_integer_limit' },
@@ -39,11 +39,11 @@ module API
         params do
           requires :otp,
                    type: { value: Integer, message: 'account.withdraw.non_integer_otp' },
-                   allow_blank: { value: false, message: 'account.withdraw.empty_otp' },
+                   allow_blank: false,
                    desc: 'OTP to perform action'
           requires :rid,
                    type: String,
-                   allow_blank: { value: false, message: 'account.withdraw.empty_rid' },
+                   allow_blank: false,
                    desc: 'Wallet address on the Blockchain.'
           requires :currency,
                    type: String,
@@ -53,6 +53,10 @@ module API
                    type: { value: BigDecimal, message: 'account.withdraw.non_decimal_amount' },
                    values: { value: ->(v) { v.try(:positive?) }, message: 'account.withdraw.non_positive_amount' },
                    desc: 'The amount to withdraw.'
+          optional :note,
+                   type: String,
+                   values: { value: ->(v) { v.size <= 256 }, message: 'account.withdraw.too_long_note' },
+                   desc: 'Optional metadata to be applied to the transaction. Used to tag transactions with memorable comments.'
         end
         post '/withdraws' do
           withdraw_api_must_be_enabled!
@@ -66,7 +70,8 @@ module API
             sum:            params[:amount],
             member:         current_user,
             currency:       currency,
-            rid:            params[:rid]
+            rid:            params[:rid],
+            note:           params[:note]
           withdraw.save!
           withdraw.with_lock { withdraw.submit! }
           present withdraw, with: API::V2::Entities::Withdraw

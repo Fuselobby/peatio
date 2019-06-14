@@ -4,11 +4,6 @@
 namespace :admin do
   get '/', to: 'dashboard#index', as: :dashboard
 
-  resources :incentive_histories, only: :index
-  resources :campaign_logs, only: %i[index show]
-  resources :campaign_options, except: :destroy
-  resources :campaigns, except: :destroy
-  resources :analysts, except: %i[edit destroy]
   resources :markets, except: %i[edit destroy]
   resources :currencies, except: %i[edit destroy]
   resources :blockchains, except: %i[edit destroy]
@@ -18,7 +13,7 @@ namespace :admin do
 
   resources :members, only: %i[index show]
 
-  resources 'deposits/:currency',  to: AdminDepositsRouter.new,  as: 'deposit'
+  resources 'deposits/:currency', to:  AdminDepositsRouter.new,  as: 'deposit'
   resources 'withdraws/:currency', to: AdminWithdrawsRouter.new, as: 'withdraw'
 
   %i[liability asset revenue expense].each do |type|
@@ -29,8 +24,4 @@ namespace :admin do
 
   get :balance_sheet,  controller: 'accountings'
   get :income_statement, controller: 'accountings'
-  get :analysts_sheet, controller: 'analysts'
-  get :hot_trade, controller: 'analysts'
-  get :top_spender, controller: 'analysts'
-  get :top_trader, controller: 'analysts'
 end

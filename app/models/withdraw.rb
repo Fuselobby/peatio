@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-class Withdraw < ActiveRecord::Base
+class Withdraw < ApplicationRecord
   STATES = %i[ prepared
                submitted
                rejected
@@ -252,7 +252,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20181120113445
+# Schema version: 20190402130148
 #
 # Table name: withdraws
 #
@@ -269,6 +269,7 @@ end
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
 #  rid          :string(95)       not null
+#  note         :string(256)
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime

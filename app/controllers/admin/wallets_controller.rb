@@ -21,11 +21,9 @@ module Admin
     def create
       @wallet = Wallet.new(wallet_params)
       if @wallet.save
-        activity_record(user: current_user.id, action: 'create', result: 'succeed', topic: 'wallets')
         redirect_to admin_wallets_path
       else
-        activity_record(user: current_user.id, action: 'create', result: 'failed', topic: 'wallets')
-        flash[:alert] = @wallet.errors.full_messages
+        flash[:alert] = @wallet.errors.full_messages.first
         render :show
       end
     end
@@ -33,12 +31,10 @@ module Admin
     def update
       @wallet = Wallet.find(params[:id])
       if @wallet.update(wallet_params)
-        activity_record(user: current_user.id, action: 'update', result: 'succeed', topic: 'wallets')
         redirect_to admin_wallets_path
       else
-        activity_record(user: current_user.id, action: 'update', result: 'failed', topic: 'wallets')
-        flash[:alert] = @wallet.errors.full_messages
-        redirect_to :back
+        flash[:alert] = @wallet.errors.full_messages.first
+        render :show
       end
     end
 

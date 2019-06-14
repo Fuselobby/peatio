@@ -1,7 +1,7 @@
 # Peatio Management API v2
 Management API is server-to-server API with high privileges.
 
-## Version: 2.0.34
+## Version: 2.1.20
 
 **Contact information:**  
 peatio.tech  
@@ -258,6 +258,9 @@ Returns assets as paginated collection.
 | currency | formData | The currency for operations filtering. | No | string |
 | page | formData | The page number (defaults to 1). | No | integer |
 | limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+| time_from | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations after the time will be returned. | No | integer |
+| time_to | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations before the time will be returned. | No | integer |
+| reference_type | formData | The reference type for operations filtering | No | string |
 
 ##### Responses
 
@@ -301,6 +304,9 @@ Returns expenses as paginated collection.
 | currency | formData | The currency for operations filtering. | No | string |
 | page | formData | The page number (defaults to 1). | No | integer |
 | limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+| time_from | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations after the time will be returned. | No | integer |
+| time_to | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations before the time will be returned. | No | integer |
+| reference_type | formData | The reference type for operations filtering | No | string |
 
 ##### Responses
 
@@ -344,6 +350,9 @@ Returns revenues as paginated collection.
 | currency | formData | The currency for operations filtering. | No | string |
 | page | formData | The page number (defaults to 1). | No | integer |
 | limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+| time_from | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations after the time will be returned. | No | integer |
+| time_to | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations before the time will be returned. | No | integer |
+| reference_type | formData | The reference type for operations filtering | No | string |
 
 ##### Responses
 
@@ -387,8 +396,11 @@ Returns liabilities as paginated collection.
 | ---- | ---------- | ----------- | -------- | ---- |
 | currency | formData | The currency for operations filtering. | No | string |
 | uid | formData | The user ID for operations filtering. | No | string |
+| reference_type | formData | The reference type for operations filtering | No | string |
+| time_from | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations after the time will be returned. | No | integer |
+| time_to | formData | An integer represents the seconds elapsed since Unix epoch.If set, only operations before the time will be returned. | No | integer |
 | page | formData | The page number (defaults to 1). | No | integer |
-| limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+| limit | formData | The number of objects per page (defaults to 100, maximum is 10000). | No | integer |
 
 ##### Responses
 
@@ -466,7 +478,7 @@ Returns withdraws as paginated collection.
 | amount | string | The withdraw amount excluding fee. | No |
 | fee | string | The exchange fee. | No |
 | rid | string | The beneficiary ID or wallet address on the Blockchain. | No |
-| state | string | The withdraw state. «prepared» – initial state, money are not locked. «submitted» – withdraw has been allowed by outer service for further validation, money are locked. «canceled» – withdraw has been canceled by outer service, money are unlocked. «accepted» – system has validated withdraw and queued it for processing by worker, money are locked. «rejected» – system has validated withdraw and found errors, money are unlocked. «suspected» – system detected suspicious activity, money are unlocked. «processing» – worker is processing withdraw as the current moment, money are locked. «succeed» – worker has successfully processed withdraw, money are subtracted from the account. «failed» – worker has encountered an unhandled error while processing withdraw, money are unlocked. | No |
+| state | string | The withdraw state. «prepared» – initial state, money are not locked. «submitted» – withdraw has been allowed by outer service for further validation, money are locked. «canceled» – withdraw has been canceled by outer service, money are unlocked. «accepted» – system has validated withdraw and queued it for processing by worker, money are locked. «rejected» – system has validated withdraw and found errors, money are unlocked. «processing» – worker is processing withdraw as the current moment, money are locked. «skipped» – worker skipped withdrawal in case of insufficient balance of hot wallet or it absence. «succeed» – worker has successfully processed withdraw, money are subtracted from the account. «failed» – worker has encountered an unhandled error while processing withdraw, money are unlocked. | No |
 | created_at | string | The datetime when withdraw was created. | No |
 | blockchain_txid | string | The transaction ID on the Blockchain (coin only). | No |
 
@@ -481,4 +493,5 @@ Returns liabilities as paginated collection.
 | credit | string | Operation credit amount. | No |
 | debit | string | Operation debit amount. | No |
 | uid | string | The shared user ID. | No |
+| reference_type | string | The type of operations. | No |
 | created_at | string | The datetime when operation was created. | No |

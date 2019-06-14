@@ -31,24 +31,11 @@ defaults: &defaults
 
   # Configuration variables for Sentry.
   SENTRY_DSN_BACKEND:  ~          # Specify Sentry DSN used for Rails application.
-  SENTRY_DSN_FRONTEND: ~          # Specify Sentry DSN used for JavaScript application.
 
   # Customize page metadata like title, description & keywords for landing, cabinet & admin modules.
   METADATA_TITLE:       Peatio Exchange
   METADATA_DESCRIPTION: The Opensource Cryptocurrency Exchange
   METADATA_KEYWORDS:    Peatio,Opensource,Exchange,Cryptocurrency
-
-  # Customize bank details which is shown at fiat deposit page. You are free to supply HTML here.
-  BANK_DETAILS_HTML: |
-    <div><strong>Use this bank to make a deposit:</strong></div>
-    <div>Bank: National Bank of World</div>
-    <div>Account: 1234567890</div>
-
-  # Set to "true" to disable markets UI (admins still have access).
-  DISABLE_MARKETS_UI: ~
-
-  # Set to "true" to disable cabinet UI (admins still have access).
-  DISABLE_CABINET_UI: ~
 
   # Configuration variables for JWT verification.
   # Get explanation at https://en.wikipedia.org/wiki/JSON_Web_Token.
@@ -86,7 +73,7 @@ defaults: &defaults
   #
   # To authenticate using JWT send it's value in "Authorization" header:
   #
-  #   curl -H "Authorization: Bearer TOKEN" http://localhost:3000/api/v2/members/me
+  #   curl -H "Authorization: Bearer TOKEN" http://localhost:3000/api/v2/account/balances
   #
   JWT_PUBLIC_KEY:        ~
   JWT_ALGORITHM:         RS256  # JWT signing algorithm (mandatory).
@@ -132,12 +119,12 @@ defaults: &defaults
 
   RANGER_HOST: '0.0.0.0'
   RANGER_PORT: '8081'
-  RANGER_CONNECT_SECURE: false
+  RANGER_CONNECT_SECURE: 'false'
 
   BULLET: 'false'
 
   # Configuration to allow Withdraw via API i.e (POST api/v2/account/withdraws)
-  ENABLE_ACCOUNT_WITHDRAWAL_API: true
+  ENABLE_ACCOUNT_WITHDRAWAL_API: 'true'
 
   # Configure Vault to verify OTP for Withdraw API
   VAULT_URL:    http://127.0.0.1:8200

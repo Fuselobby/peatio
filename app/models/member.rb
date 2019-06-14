@@ -3,7 +3,7 @@
 
 require 'securerandom'
 
-class Member < ActiveRecord::Base
+class Member < ApplicationRecord
   has_many :orders
   has_many :accounts
   has_many :payment_addresses, through: :accounts
@@ -16,9 +16,9 @@ class Member < ActiveRecord::Base
 
   validates :email, presence: true, uniqueness: true, email: true
   validates :level, numericality: { greater_than_or_equal_to: 0 }
-  validates :role, inclusion: { in: %w[member admin operator] }
+  validates :role, inclusion: { in: %w[member admin] }
 
-  after_create :touch_accounts, :new_joiner_campaign
+  after_create :touch_accounts
 
   attr_readonly :email
 
@@ -27,11 +27,7 @@ class Member < ActiveRecord::Base
   end
 
   def admin?
-    role == "admin" || role == "operator"
-  end
-
-  def operator?
-    role == "operator"
+    role == "admin"
   end
 
   def get_account(model_or_id_or_code)
@@ -46,43 +42,6 @@ class Member < ActiveRecord::Base
     Currency.find_each do |currency|
       next if accounts.where(currency: currency).exists?
       accounts.create!(currency: currency)
-    end
-  end
-
-  def new_joiner_campaign
-    begin
-      ActiveRecord::Base.transaction do
-        uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
-        req = Net::HTTP::Post.new(uri)
-        campaign_log_data = {
-          user_id: uid,
-          audience_type: 'New Join',
-          campaign_type: ['Register'].to_json
-        }
-        req.set_form_data(campaign_log_data)
-
-        res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-          http.request(req)
-        end
-
-        case res
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          @new_campaign_logs = JSON.parse(res.body)
-          if @new_campaign_logs.present?
-            @new_campaign_logs.each do |n|
-              currency = Currency.find_by(id: n["receive_currency"], enabled: true)
-              account = accounts.find_by(currency: currency)
-              account.plus_funds(n["receive_amount"].to_d) if account
-
-              Account.record_complete_operations(n["receive_amount"].to_d, currency, self)
-            end
-          end
-        else
-        end
-      end
-    rescue Exception => ex
-      puts ex.message
-      puts ex.backtrace.join("\n")
     end
   end
 
@@ -114,35 +73,6 @@ private
 
   def downcase_email
     self.email = email.try(:downcase)
-  end
-
-  def record_complete_operations(amount, currency, member)
-    transaction do
-      # Credit main fiat/crypto Asset account.
-      ::Operations::Asset.credit!(
-        amount: amount,
-        currency: currency,
-      )
-
-      # Debit main fiat/crypto Expense account.
-      ::Operations::Expense.debit!(
-        amount: amount,
-        currency: currency,
-      )
-
-      # Credit and debit main fiat/crypto Liability account.
-      ::Operations::Liability.credit!(
-        amount: amount,
-        currency: currency,
-        member_id: member.id
-      )
-
-      ::Operations::Liability.debit!(
-        amount: amount,
-        currency: currency,
-        member_id: member.id
-      )
-    end
   end
 
   class << self
