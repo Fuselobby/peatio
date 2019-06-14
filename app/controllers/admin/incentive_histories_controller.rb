@@ -1,0 +1,21 @@
+module Admin
+  class IncentiveHistoriesController < BaseController
+    def index
+      uri = URI("http://campaign:8002/api/v1/campaign_logs")
+      params = { user_id: current_user.uid }
+      uri.query = URI.encode_www_form(params)
+
+      res = Net::HTTP.get_response(uri)
+
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        campaign_logs = JSON.parse(res.body)
+      else
+        campaign_logs = []
+      end
+
+      @campaigns = Kaminari.paginate_array(campaign_logs).page(params[:page]).per(10)
+    end
+
+  end
+end

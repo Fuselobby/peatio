@@ -1,0 +1,27 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3><%= @campaign_option["option_type"] %> (<%= @campaign_option["option_name"] %>)</h3>
+  <div>
+    <%= link_to "Edit", edit_admin_campaign_option_path(@campaign_option["id"]), class: "btn btn-primary mr-1" %>
+    <%= link_to "Back", admin_campaign_options_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="card card-primary">
+  <div class="card-header">
+    Campaign Option Details
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <strong class="col-sm-4 text-right">Option Type</strong>
+      <dd class="col-sm-8"><%= @campaign_option["option_type"] %><br></dd>
+      <strong class="col-sm-4 text-right">Option Name</strong>
+      <dd class="col-sm-8"><%= @campaign_option["option_name"] %><br></dd>
+      <strong class="col-sm-4 text-right">Status</strong>
+      <dd class="col-sm-8"><%= @campaign_option["status"] %><br></dd>
+      <strong class="col-sm-4 text-right">Description</strong>
+      <dd class="col-sm-8"><%= @campaign_option["description"] %><br></dd>
+      <strong class="col-sm-4 text-right">Data</strong>
+      <dd class="col-sm-8"><%= @campaign_option["json_data"] %><br></dd>
+    </dl>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Campaign Options</h3>
+  <div>
+    <%= link_to "New Campaign Option", new_admin_campaign_option_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+<div class="card table-responsive">
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th><%= sort_link("Option Type", "option_type") %></th>
+        <th><%= sort_link("Option Name", "option_name") %></th>
+        <th><%= sort_link("Status", "status") %></th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+     <% @campaign_options.each do |campaign_option| %>
+       <tr>
+         <td><%= campaign_option["option_type"] %></td>
+         <td><%= campaign_option["option_name"] %></td>
+         <td class="text-<%= campaign_option["status"] == 'ACTIVE' ? 'success' : 'danger' %>"><%= campaign_option["status"] %></td>
+         <td><%= link_to "View", admin_campaign_option_path(campaign_option["id"]) %></td>
+       </tr>
+     <% end %>
+   </tbody>
+ </table>
+</div>
+<%= paginate @campaign_options %>

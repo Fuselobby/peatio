@@ -4,6 +4,10 @@
 namespace :admin do
   get '/', to: 'dashboard#index', as: :dashboard
 
+  resources :incentive_histories, only: :index
+  resources :campaign_logs, only: %i[index show]
+  resources :campaign_options, except: :destroy
+  resources :campaigns, except: :destroy
   resources :markets, except: %i[edit destroy]
   resources :currencies, except: %i[edit destroy]
   resources :blockchains, except: %i[edit destroy]

@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Edit Campaign Option</h3>
+  <div>
+    <%= link_to "Back", admin_campaign_option_path(@campaign_option["id"]), class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="card card-primary">
+  <div class="card-header">
+    Campaign Option Details
+  </div>
+  <div class="card-body">
+    <%= form_tag admin_campaign_option_path(@campaign_option["id"]), method: :put do %>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <%= label_tag :option_type, 'Option Type' %>
+            <%= select_tag :option_type, options_for_select(['Audience Type', 'Calculation Type', 'Campaign Type', 'Execution Type', 'Incentive Type'], @campaign_option["option_type"]), class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :option_name, 'Option Name' %>
+            <%= text_field_tag :option_name, @campaign_option["option_name"], class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :description %>
+            <%= text_field_tag :description, @campaign_option["description"], class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :status %>
+            <%= select_tag :status, options_for_select(['ACTIVE', 'INACTIVE'], @campaign_option["status"]), class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div id="json_editor" data-enabled="true"></div>
+        </div>
+      </div>
+      <%= submit_tag 'Submit', class: "btn btn-primary mt-3 float-right", data: {confirm: "Are you sure to update this campaign option?"} %>
+    <% end %>
+  </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        elem = $('#json_editor');
+        if(elem.length){
+            json_editor = new JSONEditor(document.getElementById('json_editor'), {
+                disable_collapse: true,
+                theme: 'bootstrap3',
+                iconlib: 'fontawesome4',
+                disable_array_reorder: true,
+                required: jQuery.parseJSON('<%= raw @options_attributes.map(&:to_s) %>'),
+                disable_array_delete_last_row: true,
+                schema: {
+                    title: 'Data',
+                    type: 'object',
+                    properties: jQuery.parseJSON('<%= raw @build_options_schema.to_json %>')
+                }
+            });
+            json_editor.setValue(jQuery.parseJSON('<%= raw @set_options_values.to_json %>'));
+
+            if(elem.data("enabled") === false){
+                json_editor.disable();
+            }
+
+            json_editor.on('change',function() {
+                $('#json_data').val(JSON.stringify(json_editor.getValue()));
+            });
+        }
+    });
+</script>
