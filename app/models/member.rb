@@ -115,7 +115,7 @@ private
 
     # Filter and validate payload params
     def filter_payload(payload)
-      payload.slice(:email, :uid, :role, :state, :level)
+      payload.slice(:email, :uid, :role, :state, :level, :referral_uid)
     end
 
     def validate_payload(p)
