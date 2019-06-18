@@ -140,13 +140,13 @@ class Deposit < ActiveRecord::Base
   end
 
   def deposit_campaign
-    trigger_campaigns(member, ["%Deposit #{currency_id}%"].to_json)
+    trigger_campaigns(member, ["Deposit%#{currency_id}"].to_json)
   end
 
   def deposit_referral_campaign
     referrer = Member.find_by(id: member.referral_uid)
     remark = "The person you referred, #{member.email} has made a deposit!"
-    trigger_campaigns(referrer, ["%Deposit #{currency_id}%Referral%"].to_json, member.uid, remark) if referrer
+    trigger_campaigns(referrer, ["Deposit%#{currency_id}","Referral"].to_json, member.uid, remark) if referrer
   end
 
   private
