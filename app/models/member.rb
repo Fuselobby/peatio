@@ -18,8 +18,7 @@ class Member < ActiveRecord::Base
   validates :level, numericality: { greater_than_or_equal_to: 0 }
   validates :role, inclusion: { in: %w[member admin operator] }
 
-  after_create :touch_accounts, :new_joiner_campaign
-
+  after_create :touch_accounts
   attr_readonly :email
 
   def trades
@@ -46,43 +45,6 @@ class Member < ActiveRecord::Base
     Currency.find_each do |currency|
       next if accounts.where(currency: currency).exists?
       accounts.create!(currency: currency)
-    end
-  end
-
-  def new_joiner_campaign
-    begin
-      ActiveRecord::Base.transaction do
-        uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
-        req = Net::HTTP::Post.new(uri)
-        campaign_log_data = {
-          user_id: uid,
-          audience_type: 'New Join',
-          campaign_type: ['Register'].to_json
-        }
-        req.set_form_data(campaign_log_data)
-
-        res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-          http.request(req)
-        end
-
-        case res
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          @new_campaign_logs = JSON.parse(res.body)
-          if @new_campaign_logs.present?
-            @new_campaign_logs.each do |n|
-              currency = Currency.find_by(id: n["receive_currency"], enabled: true)
-              account = accounts.find_by(currency: currency)
-              account.plus_funds(n["receive_amount"].to_d) if account
-
-              Account.record_complete_operations(n["receive_amount"].to_d, currency, self)
-            end
-          end
-        else
-        end
-      end
-    rescue Exception => ex
-      puts ex.message
-      puts ex.backtrace.join("\n")
     end
   end
 
@@ -173,6 +135,7 @@ private
         m.role = params[:role]
         m.state = params[:state]
         m.level = params[:level]
+        m.referral_uid = params[:referral_uid]
       end
       member.assign_attributes(params)
       member.save! if member.changed?
@@ -181,7 +144,7 @@ private
 
     # Filter and validate payload params
     def filter_payload(payload)
-      payload.slice(:email, :uid, :role, :state, :level)
+      payload.slice(:email, :uid, :role, :state, :level, :referral_uid)
     end
 
     def validate_payload(p)
@@ -223,18 +186,19 @@ private
 end
 
 # == Schema Information
-# Schema version: 20181027192001
+# Schema version: 20190617065856
 #
 # Table name: members
 #
-#  id         :integer          not null, primary key
-#  uid        :string(12)       not null
-#  email      :string(255)      not null
-#  level      :integer          not null
-#  role       :string(16)       not null
-#  state      :string(16)       not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :integer          not null, primary key
+#  uid          :string(12)       not null
+#  email        :string(255)      not null
+#  level        :integer          not null
+#  role         :string(16)       not null
+#  state        :string(16)       not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  referral_uid :string(12)
 #
 # Indexes
 #
