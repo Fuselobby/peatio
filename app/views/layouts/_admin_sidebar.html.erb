@@ -38,6 +38,13 @@
         <% end %>
       </li>
 
+      <li class="list-icon-item <%= check_active('wallets_summary') %>">
+          <%= link_to admin_wallets_summary_index_path, data: {confirm: "Querying wallet balance from the blockchain takes time."} do %>
+            <i class="icon fa fa-money-bill-wave"></i>
+            <span class="menu-text">Wallets Summary</span>
+          <% end %>
+        </li>
+
       <% if !current_user.admin? %>
         <% if can? :manage, Blockchain %>
           <li class="list-icon-item <%= check_active('blockchains') %>">
