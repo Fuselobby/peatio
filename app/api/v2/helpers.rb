@@ -7,6 +7,7 @@ module API
       extend Memoist
 
       def authenticate!
+        return if request.path == '/api/v2/market/campaign_trades'
         current_user or raise Peatio::Auth::Error
       end
 
@@ -23,6 +24,7 @@ module API
       end
 
       def trading_must_be_permitted!
+        return if request.path == '/api/v2/market/campaign_trades'
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_TRADING').to_i
           error!({ errors: ['market.trade.not_permitted'] }, 403)
         end

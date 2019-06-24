@@ -24,6 +24,15 @@ module API
             .tap { |q| q.where!(market: params[:market]) if params[:market] }
             .tap { |q| present paginate(q), with: API::V2::Entities::Trade, current_user: current_user }
         end
+
+        desc 'Get trades'
+        get '/campaign_trades' do
+          Trade.all
+            .tap { |q| q.where!(market_id: params[:market_id]) if params[:market_id].present? }
+            .tap { |q| q.where!("created_at >= ?", params[:from]) if params[:from].present? }
+            .tap { |q| q.where!("created_at <= ?", params[:to]) if params[:to].present? }
+            .order('created_at asc')
+        end
       end
     end
   end

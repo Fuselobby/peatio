@@ -15,14 +15,72 @@ class Trade < ActiveRecord::Base
 
   validates :price, :volume, :funds, numericality: { greater_than_or_equal_to: 0.to_d }
 
-  scope :h24, -> { where('created_at > ?', 24.hours.ago) }  
+  scope :h24, -> { where('created_at > ?', 24.hours.ago) }
 
   scope :ordered, -> { order(funds: :desc) }
+
+  before_validation do
+    self.ask_member_uid = ask_member.uid
+    self.bid_member_uid = bid_member.uid
+  end
+
   after_commit on: :create do
     EventAPI.notify ['market', market_id, 'trade_completed'].join('.'), \
       Serializers::EventAPI::TradeCompleted.call(self)
   end
 
+  def trigger_campaigns(reward_user, campaign_type, source_user_id=nil, remark=nil)
+    begin
+      ActiveRecord::Base.transaction do
+        uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
+        req = Net::HTTP::Post.new(uri)
+        campaign_log_data = {
+          user_id: reward_user.uid,
+          audience_type: 'All Users',
+          campaign_type: campaign_type,
+          source_type: self.class.name,
+          source_id: id,
+          source_user_id: source_user_id,
+          remark: remark,
+          amount: amount,
+          fee: fee
+        }
+        req.set_form_data(campaign_log_data)
+
+        res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+          http.request(req)
+        end
+
+        case res
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          @new_campaign_logs = JSON.parse(res.body)
+          if @new_campaign_logs.present?
+            @new_campaign_logs.each do |n|
+              log_currency = Currency.find_by(id: n["receive_currency"], enabled: true)
+              log_account = member.accounts.find_by(currency: log_currency)
+              log_account.plus_funds(n["receive_amount"].to_d) if log_account
+
+              Account.record_complete_operations(n["receive_amount"].to_d, log_currency, self)
+            end
+          end
+        else
+        end
+      end
+    rescue Exception => ex
+      puts ex.message
+      puts ex.backtrace.join("\n")
+    end
+  end
+
+  def trade_campaign
+    trigger_campaigns(member, ["Deposit%#{currency_id}"].to_json)
+  end
+
+  def trade_referral_campaign
+    referrer = Member.find_by(uid: member.referral_uid)
+    remark = "The person you referred, #{member.email} has made a deposit!"
+    trigger_campaigns(referrer, ["Deposit%#{currency_id}","Referral"].to_json, member.uid, remark) if referrer
+  end
 
   class << self
     def latest_price(market)
@@ -152,22 +210,24 @@ class Trade < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20190213104708
+# Schema version: 20190620022012
 #
 # Table name: trades
 #
-#  id            :integer          not null, primary key
-#  price         :decimal(32, 16)  not null
-#  volume        :decimal(32, 16)  not null
-#  ask_id        :integer          not null
-#  bid_id        :integer          not null
-#  trend         :integer          not null
-#  market_id     :string(20)       not null
-#  ask_member_id :integer          not null
-#  bid_member_id :integer          not null
-#  funds         :decimal(32, 16)  not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id             :integer          not null, primary key
+#  price          :decimal(32, 16)  not null
+#  volume         :decimal(32, 16)  not null
+#  ask_id         :integer          not null
+#  bid_id         :integer          not null
+#  trend          :integer          not null
+#  market_id      :string(20)       not null
+#  ask_member_id  :integer          not null
+#  bid_member_id  :integer          not null
+#  funds          :decimal(32, 16)  not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  ask_member_uid :string(12)       not null
+#  bid_member_uid :string(12)       not null
 #
 # Indexes
 #

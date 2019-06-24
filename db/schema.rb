@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190617065856) do
+ActiveRecord::Schema.define(version: 20190620022012) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -255,17 +255,19 @@ ActiveRecord::Schema.define(version: 20190617065856) do
   add_index "revenues", ["reference_type", "reference_id"], name: "index_revenues_on_reference_type_and_reference_id", using: :btree
 
   create_table "trades", force: :cascade do |t|
-    t.decimal  "price",                    precision: 32, scale: 16, null: false
-    t.decimal  "volume",                   precision: 32, scale: 16, null: false
-    t.integer  "ask_id",        limit: 4,                            null: false
-    t.integer  "bid_id",        limit: 4,                            null: false
-    t.integer  "trend",         limit: 4,                            null: false
-    t.string   "market_id",     limit: 20,                           null: false
-    t.integer  "ask_member_id", limit: 4,                            null: false
-    t.integer  "bid_member_id", limit: 4,                            null: false
-    t.decimal  "funds",                    precision: 32, scale: 16, null: false
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.decimal  "price",                     precision: 32, scale: 16, null: false
+    t.decimal  "volume",                    precision: 32, scale: 16, null: false
+    t.integer  "ask_id",         limit: 4,                            null: false
+    t.integer  "bid_id",         limit: 4,                            null: false
+    t.integer  "trend",          limit: 4,                            null: false
+    t.string   "market_id",      limit: 20,                           null: false
+    t.integer  "ask_member_id",  limit: 4,                            null: false
+    t.integer  "bid_member_id",  limit: 4,                            null: false
+    t.decimal  "funds",                     precision: 32, scale: 16, null: false
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
+    t.string   "ask_member_uid", limit: 12,                           null: false
+    t.string   "bid_member_uid", limit: 12,                           null: false
   end
 
   add_index "trades", ["ask_id"], name: "index_trades_on_ask_id", using: :btree
