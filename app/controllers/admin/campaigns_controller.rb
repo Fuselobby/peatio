@@ -38,7 +38,7 @@ module Admin
       @reward_types = active_campaign_options.select{ |a| ["Incentive Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @calculation_types = active_campaign_options.select{ |a| ["Calculation Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @reward_currencies = Currency.where(enabled: true).distinct.pluck(:id).sort
-      @frequency_units = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years']
+      @frequency_units = ['day', 'month']
     end
 
     def show
@@ -54,7 +54,7 @@ module Admin
 
     def create
       if params[:execution_type] == 'Schedule'
-        frequency = params[:frequency_interval] + " " + params[:frequency_unit] if params[:frequency_interval] && params[:frequency_unit]
+        frequency = params[:frequency_interval].to_i.to_s + " " + params[:frequency_unit] if params[:frequency_interval] && params[:frequency_unit]
       end
       uri = URI("http://campaign:8002/api/v1/campaigns")
       req = Net::HTTP::Post.new(uri)
@@ -115,13 +115,15 @@ module Admin
         @reward_types = active_campaign_options.select{ |a| ["Incentive Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @calculation_types = active_campaign_options.select{ |a| ["Calculation Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @reward_currencies = Currency.where(enabled: true).distinct.pluck(:id).sort
-        @frequency_units = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years']
+        @frequency_units = ['day', 'month']
+        @campaign["frequency_interval"] = @campaign["frequency"].split(" ").first
+        @campaign["frequency_unit"] = @campaign["frequency"].split(" ").last
       end
     end
 
     def update
       if params[:execution_type] == 'Schedule'
-        frequency = params[:frequency_interval] + " " + params[:frequency_unit] if params[:frequency_interval] && params[:frequency_unit]
+        frequency = params[:frequency_interval].to_i.to_s + " " + params[:frequency_unit] if params[:frequency_interval] && params[:frequency_unit]
       end
       uri = URI("http://campaign:8002/api/v1/campaigns/#{params[:id]}")
       req = Net::HTTP::Put.new(uri)
