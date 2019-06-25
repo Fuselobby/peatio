@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190620022012) do
+ActiveRecord::Schema.define(version: 20190625071806) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -170,14 +170,15 @@ ActiveRecord::Schema.define(version: 20190620022012) do
   add_index "markets", ["position"], name: "index_markets_on_position", using: :btree
 
   create_table "members", force: :cascade do |t|
-    t.string   "uid",          limit: 12,  null: false
-    t.string   "email",        limit: 255, null: false
-    t.integer  "level",        limit: 4,   null: false
-    t.string   "role",         limit: 16,  null: false
-    t.string   "state",        limit: 16,  null: false
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "referral_uid", limit: 12
+    t.string   "uid",             limit: 12,              null: false
+    t.string   "email",           limit: 255,             null: false
+    t.integer  "level",           limit: 4,               null: false
+    t.string   "role",            limit: 16,              null: false
+    t.string   "state",           limit: 16,              null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+    t.string   "referral_uid",    limit: 12
+    t.integer  "referral_counts", limit: 4,   default: 0
   end
 
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
