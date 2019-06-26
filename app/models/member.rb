@@ -136,6 +136,7 @@ private
         m.state = params[:state]
         m.level = params[:level]
         m.referral_uid = params[:referral_uid]
+        m.referrals_count = params[:referrals_count]
       end
       member.assign_attributes(params)
       member.save! if member.changed?
@@ -144,7 +145,7 @@ private
 
     # Filter and validate payload params
     def filter_payload(payload)
-      payload.slice(:email, :uid, :role, :state, :level, :referral_uid)
+      payload.slice(:email, :uid, :role, :state, :level, :referral_uid, :referrals_count)
     end
 
     def validate_payload(p)
@@ -186,19 +187,20 @@ private
 end
 
 # == Schema Information
-# Schema version: 20190617065856
+# Schema version: 20190625071806
 #
 # Table name: members
 #
-#  id           :integer          not null, primary key
-#  uid          :string(12)       not null
-#  email        :string(255)      not null
-#  level        :integer          not null
-#  role         :string(16)       not null
-#  state        :string(16)       not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  referral_uid :string(12)
+#  id              :integer          not null, primary key
+#  uid             :string(12)       not null
+#  email           :string(255)      not null
+#  level           :integer          not null
+#  role            :string(16)       not null
+#  state           :string(16)       not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  referral_uid    :string(12)
+#  referral_counts :integer          default(0)
 #
 # Indexes
 #
