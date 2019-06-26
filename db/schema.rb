@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190625071806) do
+ActiveRecord::Schema.define(version: 20190626084245) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -178,7 +178,7 @@ ActiveRecord::Schema.define(version: 20190625071806) do
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
     t.string   "referral_uid",    limit: 12
-    t.integer  "referral_counts", limit: 4,   default: 0
+    t.integer  "referrals_count", limit: 4,   default: 0
   end
 
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree

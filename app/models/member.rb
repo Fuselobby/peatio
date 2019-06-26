@@ -158,7 +158,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20190625071806
+# Schema version: 20190626084245
 #
 # Table name: members
 #
@@ -171,7 +171,7 @@ end
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  referral_uid    :string(12)
-#  referral_counts :integer          default(0)
+#  referrals_count :integer          default(0)
 #
 # Indexes
 #
