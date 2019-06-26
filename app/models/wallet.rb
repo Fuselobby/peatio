@@ -81,7 +81,6 @@ class Wallet < ActiveRecord::Base
 
   def wallet_balance
     # TODO: move the URL & params (instead of harcoding here) to blockchains which is to be entered by admin during blockchain creation
-    puts "currency_id: #{currency_id}"
     currency = Currency.find_by(id: currency_id)
 
     case currency_id
@@ -143,7 +142,6 @@ class Wallet < ActiveRecord::Base
       end
     else
       balance = 0
-      puts balance
     end
 
     # Return mapping
