@@ -78,6 +78,87 @@ class Wallet < ActiveRecord::Base
   def wallet_url
     blockchain.explorer_address.gsub('#{address}', address) if blockchain
   end
+
+  def wallet_balance
+    # TODO: move the URL & params (instead of harcoding here) to blockchains which is to be entered by admin during blockchain creation
+    currency = Currency.find_by(id: currency_id)
+
+    case currency_id
+    when 'eth'
+      url = "https://api.etherscan.io/api"
+      params = 
+      { 
+         :module => "account",
+         :action => "balance",
+         :address => "#{address}"
+      }
+      result_structure = ["result"]
+    when 'btc'
+      url = "https://blockchain.info/q/addressbalance/#{address}"
+    when 'bch'
+      url = "https://bcc.zupago.pe/api/addr/#{address}/Balance"
+    when 'ltc'
+      url = "https://chain.so/api/v2/get_address_balance/LTC/#{address}"
+      result_structure = ["data","confirmed_balance"]
+    else # For ERC20 tokens
+      contract_address = currency.options['erc20_contract_address']
+
+      if contract_address.present?
+        url = "https://api.etherscan.io/api"
+        params = 
+        { 
+           :module => "account",
+           :action => "tokenbalance",
+           :contractaddress => "#{contract_address}",
+           :address => "#{address}"
+        }
+        result_structure = ["result"]
+      end
+    end
+
+    res = rest_api_get(url, params)
+
+    case res
+    when Net::HTTPSuccess, Net::HTTPRedirection
+      body = JSON.parse(res.body)
+
+      # Retrieve the coin balance from the returned body (defined in result_structure)
+      balance = ""
+      if result_structure.present?
+        result_structure.each do |res| 
+          body = body["#{res}"]
+        end
+      end
+
+      # Return correct value
+      # Handle exception in case result returned by API is not the balance but error message
+      begin
+        balance = body.to_d / currency.base_factor
+
+        # LTC API returns correct precision
+        balance = body if currency_id == "ltc"
+      rescue
+        balance = body
+      end
+    else
+      balance = 0
+    end
+
+    # Return mapping
+    {
+      name: name,
+      balance: balance
+    }
+  end
+
+  private
+  def rest_api_get(url, params)
+    if url.present?
+      uri = URI(url)
+      uri.query = URI.encode_www_form(params) if params.present?
+      Net::HTTP.get_response(uri)
+    end
+  end
 end
 
 # == Schema Information

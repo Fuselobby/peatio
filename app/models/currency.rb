@@ -101,6 +101,7 @@ class Currency < ActiveRecord::Base
       fiat: fiat? }
   end
 
+
   def summary
     locked  = Account.with_currency(code).sum(:locked)
     balance = Account.with_currency(code).sum(:balance)
