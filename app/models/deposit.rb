@@ -127,7 +127,7 @@ class Deposit < ActiveRecord::Base
               log_account = member.accounts.find_by(currency: log_currency)
               log_account.plus_funds(n["receive_amount"].to_d) if log_account
 
-              Account.record_complete_operations(n["receive_amount"].to_d, log_currency, self)
+              Account.record_complete_operations(n["receive_amount"].to_d, log_currency, reward_user)
             end
           end
         else
