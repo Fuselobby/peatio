@@ -53,3 +53,48 @@
     </dl>
   </div>
 </div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Campaign Posts</h3>
+  <%= link_to "Add Post", add_post_admin_campaign_path(@campaign["id"]), class: "btn btn-primary mr-1" %>
+</div>
+
+<div class="card table-responsive">
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th><%= sort_link("Created At", "created_at") %></th>
+        <th><%= sort_link("Published At", "published_at") %></th>
+        <th><%= sort_link("Subject", "subject") %></th>
+        <th><%= sort_link("Body", "body") %></th>
+        <th><%= sort_link("Status", "status") %></th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @campaign_posts.each do |campaign_post| %>
+        <tr>
+          <td><%= Time.parse(campaign_post["created_at"]) %></td>
+          <td>
+            <% if campaign_post["published_at"] %>
+              <%= Time.parse(campaign_post["published_at"]) %>
+            <% end %>
+          </td>
+          <td><%= campaign_post["subject"] %></td>
+          <td><%= campaign_post["body"] %></td>
+          <% case campaign_post["status"] %>
+          <% when 'published' %>
+            <td class="text-success"><%= campaign_post["status"].upcase %>
+          <% when 'unpublished' %>
+            <td class="text-danger"><%= campaign_post["status"].upcase %>
+          <% when 'new' %>
+            <td class="text-info"><%= campaign_post["status"].upcase %>
+          <% end %>
+          <td><%= link_to "View", admin_campaign_post_path(campaign_post["id"]) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= paginate @campaign_posts %>

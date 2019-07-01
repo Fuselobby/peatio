@@ -15,9 +15,11 @@
       <dd class="col-sm-8"><%= Time.parse(@campaign_log["request_date"]) %><br></dd>
       <strong class="col-sm-4 text-right">Campaign</strong>
       <dd class="col-sm-8">
-        <%= @campaign_log["campaign_name"] %>
-        <%= link_to admin_campaign_path(@campaign_log["campaign_id"]), target: :_blank do %>
-          <i class="icon fa fa-link"></i>
+        <% if @campaign_log["campaign_id"] %>
+          <%= @campaign_log["campaign_name"] %>
+          <%= link_to admin_campaign_path(@campaign_log["campaign_id"]), target: :_blank do %>
+            <i class="icon fa fa-link"></i>
+          <% end %>
         <% end %><br>
       </dd>
       <strong class="col-sm-4 text-right">Member</strong>

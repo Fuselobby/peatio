@@ -192,6 +192,13 @@
           <% end %>
         </li>
 
+        <li class="list-icon-item <%= check_active('campaign_posts') %>">
+          <%= link_to admin_campaign_posts_path do %>
+            <i class="icon fa fa-share-alt"></i>
+            <span class="menu-text">Campaign Posts</span>
+          <% end %>
+        </li>
+
         <li class="list-icon-item <%= check_active('incentive_histories') %>">
           <%= link_to admin_incentive_histories_path do %>
             <i class="icon fa fa-medal"></i>

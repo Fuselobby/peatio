@@ -50,6 +50,22 @@ module Admin
         @campaign = JSON.parse(res.body)
       else
       end
+
+      @uri = URI("http://campaign:8002/api/v1/campaign_posts")
+      data = {
+        campaign_id: params[:id]
+      }
+      @uri.query = URI.encode_www_form(data)
+      @res = Net::HTTP.get_response(@uri)
+
+      case @res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        campaign_posts = JSON.parse(@res.body)
+      else
+        campaign_posts = []
+      end
+
+      @campaign_posts = Kaminari.paginate_array(campaign_posts).page(params[:page]).per(10)
     end
 
     def create
@@ -155,6 +171,46 @@ module Admin
         redirect_to admin_campaign_path(@campaign["id"])
       else
         redirect_to edit_admin_campaign_path(params["id"])
+      end
+    end
+
+    def add_post
+      uri = URI("http://campaign:8002/api/v1/campaigns/#{params[:id]}")
+      res = Net::HTTP.get_response(uri)
+
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        @campaign = JSON.parse(res.body)
+      else
+      end
+    end
+
+    def add_post_action
+      if params[:upload].present?
+        image = File.open(params[:upload].path) {|img| img.read}
+        encoded_image = Base64.encode64(image)
+      end
+
+      uri = URI("http://campaign:8002/api/v1/campaign_posts")
+      req = Net::HTTP::Post.new(uri)
+      campaign_post_data = {
+        campaign_id: params[:id],
+        subject: params[:subject],
+        body: params[:body],
+        upload: encoded_image
+      }
+      req.set_form_data(campaign_post_data)
+
+      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
+
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        @campaign_post = JSON.parse(res.body)
+        redirect_to admin_campaign_post_path(@campaign_post["id"])
+      else
+        redirect_to add_post_admin_campaign_path
       end
     end
 
