@@ -24,7 +24,7 @@
     Campaign Post Details
   </div>
   <div class="card-body">
-    <div class="row d-flex align-items-center">
+    <!-- <div class="row d-flex align-items-center">
       <div class="col-sm-6">
         <div class="text-center">
           <% if @image_url %>
@@ -34,7 +34,7 @@
           <% end %>
         </div>
       </div>
-      <div class="col-sm-6">
+      <div class="col-sm-6"> -->
         <dl class="row">
           <strong class="col-sm-4 text-right">Created At</strong>
           <dd class="col-sm-8"><%= Time.parse(@campaign_post["created_at"]) %><br></dd>
@@ -60,7 +60,7 @@
           <strong class="col-sm-4 text-right">Status</strong>
           <dd class="col-sm-8"><%= @campaign_post["status"] %><br></dd>
         </dl>
-      </div>
-    </div>
+      <!-- </div>
+    </div> -->
   </div>
 </div>
