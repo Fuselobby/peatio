@@ -132,8 +132,8 @@ module Admin
         @calculation_types = active_campaign_options.select{ |a| ["Calculation Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @reward_currencies = Currency.where(enabled: true).distinct.pluck(:id).sort
         @frequency_units = ['day', 'month']
-        @campaign["frequency_interval"] = @campaign["frequency"].split(" ").first
-        @campaign["frequency_unit"] = @campaign["frequency"].split(" ").last
+        @campaign["frequency_interval"] = @campaign["frequency"].split(" ").first if @campaign["frequency"].present?
+        @campaign["frequency_unit"] = @campaign["frequency"].split(" ").last if @campaign["frequency"].present?
       end
     end
 
