@@ -79,9 +79,11 @@ class Wallet < ActiveRecord::Base
     blockchain.explorer_address.gsub('#{address}', address) if blockchain
   end
 
-  def wallet_balance
+  def update_balance
     # TODO: move the URL & params (instead of harcoding here) to blockchains which is to be entered by admin during blockchain creation
     currency = Currency.find_by(id: currency_id)
+    puts "currency_id = #{currency_id}"
+    puts "address = #{address}"
 
     case currency_id
     when 'eth'
@@ -143,12 +145,19 @@ class Wallet < ActiveRecord::Base
     else
       balance = 0
     end
+    puts "Balance = #{balance}"
+
+    # Return wallet balance
+    balance 
 
     # Return mapping
-    {
-      name: name,
-      balance: balance
-    }
+    # {
+    #   name: name,
+    #   kind: kind,
+    #   currency_id: currency_id,
+    #   balance: balance,
+    #   updated_at: updated_at
+    # }
   end
 
   private
@@ -162,24 +171,25 @@ class Wallet < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20181126101312
+# Schema version: 20190702084717
 #
 # Table name: wallets
 #
-#  id             :integer          not null, primary key
-#  blockchain_key :string(32)
-#  currency_id    :string(10)
-#  name           :string(64)
-#  address        :string(255)      not null
-#  kind           :integer          not null
-#  nsig           :integer
-#  gateway        :string(20)       default(""), not null
-#  settings       :string(1000)     default({}), not null
-#  max_balance    :decimal(32, 16)  default(0.0), not null
-#  parent         :integer
-#  status         :string(32)
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
+#  id              :integer          not null, primary key
+#  blockchain_key  :string(32)
+#  currency_id     :string(10)
+#  name            :string(64)
+#  address         :string(255)      not null
+#  kind            :integer          not null
+#  nsig            :integer
+#  gateway         :string(20)       default(""), not null
+#  settings        :string(1000)     default({}), not null
+#  max_balance     :decimal(32, 16)  default(0.0), not null
+#  current_balance :decimal(32, 16)  default(0.0), not null
+#  parent          :integer
+#  status          :string(32)
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 # Indexes
 #
