@@ -39,9 +39,9 @@
       </li>
 
       <li class="list-icon-item <%= check_active('wallets_summary') %>">
-          <%= link_to admin_wallets_summary_index_path, data: {confirm: "Querying wallet balance from the blockchain takes time."} do %>
+          <%= link_to admin_wallets_summary_index_path do %>
             <i class="icon fa fa-money-bill-wave"></i>
-            <span class="menu-text">Wallets Summary</span>
+            <span class="menu-text">Wallets Balance</span>
           <% end %>
         </li>
 
