@@ -38,7 +38,7 @@ module Admin
       @reward_types = active_campaign_options.select{ |a| ["Incentive Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @calculation_types = active_campaign_options.select{ |a| ["Calculation Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
       @reward_currencies = Currency.where(enabled: true).distinct.pluck(:id).sort
-      @frequency_units = ['day', 'month']
+      @frequencies = ['daily', 'monthly']
     end
 
     def show
@@ -70,7 +70,8 @@ module Admin
 
     def create
       if params[:execution_type] == 'Schedule'
-        frequency = params[:frequency_interval].to_i.to_s + " " + params[:frequency_unit] if params[:frequency_interval] && params[:frequency_unit]
+        frequency = params[:frequency]
+        next_executed_at = params[:next_executed_at]
       end
       uri = URI("http://campaign:8002/api/v1/campaigns")
       req = Net::HTTP::Post.new(uri)
@@ -88,7 +89,8 @@ module Admin
         status: params[:status],
         frequency: frequency,
         execution_type: params[:execution_type],
-        occurence: params[:occurence]
+        occurence: params[:occurence],
+        next_executed_at: next_executed_at
       }
       req.set_form_data(campaign_data)
 
@@ -131,15 +133,14 @@ module Admin
         @reward_types = active_campaign_options.select{ |a| ["Incentive Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @calculation_types = active_campaign_options.select{ |a| ["Calculation Type"].include?(a["option_type"]) }.map{ |k| k["option_name"] }.uniq.sort
         @reward_currencies = Currency.where(enabled: true).distinct.pluck(:id).sort
-        @frequency_units = ['day', 'month']
-        @campaign["frequency_interval"] = @campaign["frequency"].split(" ").first if @campaign["frequency"].present?
-        @campaign["frequency_unit"] = @campaign["frequency"].split(" ").last if @campaign["frequency"].present?
+        @frequencies = ['daily', 'monthly']
       end
     end
 
     def update
       if params[:execution_type] == 'Schedule'
-        frequency = params[:frequency_interval].to_i.to_s + " " + params[:frequency_unit] if params[:frequency_interval] && params[:frequency_unit]
+        frequency = params[:frequency]
+        next_executed_at = params[:next_executed_at]
       end
       uri = URI("http://campaign:8002/api/v1/campaigns/#{params[:id]}")
       req = Net::HTTP::Put.new(uri)
@@ -157,7 +158,8 @@ module Admin
         status: params[:status],
         frequency: frequency,
         execution_type: params[:execution_type],
-        occurence: params[:occurence]
+        occurence: params[:occurence],
+        next_executed_at: next_executed_at
       }
       req.set_form_data(campaign_data)
 

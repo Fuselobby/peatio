@@ -47,21 +47,26 @@
           </div>
         </div>
         <div class="col-sm-6">
-          <%= label_tag :frequency_interval, 'Execution Frequency(Only for schedule execution type)' %>
           <div class="form-group">
             <div class="row">
               <div class="col-sm-6">
-                <%= number_field_tag :frequency_interval, @campaign["frequency_interval"], step: :any, min: 0, class: "form-control", placeholder: 'frequency interval, e.g. 10' %>
+                <%= label_tag :frequency, 'Execution Frequency' %>
+                <%= select_tag :frequency, options_for_select(@frequencies, @campaign["frequency"]), include_blank: "Select a frequency", class: "form-control" %>
               </div>
               <div class="col-sm-6">
-                <%= select_tag :frequency_unit, options_for_select(@frequency_units, @campaign["frequency_unit"]), include_blank: "Select a frequency unit", class: "form-control" %>
+                <%= label_tag :next_executed_at, 'Next Executed At' %>
+                <% if @campaign["next_executed_at"] %>
+                  <%= datetime_field_tag :next_executed_at, Time.parse(@campaign["next_executed_at"]), class: "form-control" %>
+                <% else %>
+                  <%= datetime_local_field :next_executed_at, @campaign["next_executed_at"], class: "form-control" %>
+                <% end %>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="form-group">
-        <%= label_tag :campaign_types, 'Campaign Types (You can select more than 1)' %><br>
+        <%= label_tag :campaign_types, 'Campaign Types (You can select 1 to 2 types)' %><br>
         <div class="row">
           <% @campaign_types.each do |campaign_type| %>
             <div class="col-lg-3 col-md-4 col-sm-6">

@@ -30,7 +30,7 @@ module API
           Trade.all
             .tap { |q| q.where!(market_id: params[:market_id]) if params[:market_id].present? }
             .tap { |q| q.where!("created_at >= ?", params[:from]) if params[:from].present? }
-            .tap { |q| q.where!("created_at <= ?", params[:to]) if params[:to].present? }
+            .tap { |q| q.where!("created_at < ?", params[:to]) if params[:to].present? }
             .order('created_at asc')
         end
       end
