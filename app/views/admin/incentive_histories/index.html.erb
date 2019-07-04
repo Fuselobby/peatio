@@ -6,13 +6,15 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
-    <b><%= @count %></b> results<br>
-    <div>
-      Total:
-      <% @sums.each do |sum| %>
-        <b><%= sum["amount"] %></b> <%= sum["currency"] %>,
-      <% end %>
-    </div>
+    <b><%= @count %></b> result(s)<br>
+    <% if @sums.present? %>
+      <div>
+        Total:
+        <% @sums.each do |sum| %>
+          <b><%= sum["amount"] %></b> <%= sum["currency"] %>,
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>
 
