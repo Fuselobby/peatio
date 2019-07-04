@@ -16,6 +16,7 @@ module Admin
         campaigns = []
       end
 
+      @count = campaigns.count
       @campaigns = Kaminari.paginate_array(campaigns).page(params[:page]).per(10)
     end
 
@@ -65,6 +66,7 @@ module Admin
         campaign_posts = []
       end
 
+      @count = campaign_posts.count
       @campaign_posts = Kaminari.paginate_array(campaign_posts).page(params[:page]).per(10)
     end
 

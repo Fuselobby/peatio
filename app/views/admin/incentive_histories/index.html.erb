@@ -4,6 +4,18 @@
   </div>
 </div>
 
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <b><%= @count %></b> results<br>
+    <div>
+      Total:
+      <% @sums.each do |sum| %>
+        <b><%= sum["amount"] %></b> <%= sum["currency"] %>,
+      <% end %>
+    </div>
+  </div>
+</div>
+
 <div class="card table-responsive">
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -17,21 +29,21 @@
     </thead>
 
     <tbody>
-      <% @campaigns.each do |campaign| %>
+      <% @campaign_logs.each do |campaign_log| %>
         <tr>
-          <td><%= Time.parse(campaign["request_date"]) %></td>
+          <td><%= Time.parse(campaign_log["request_date"]) %></td>
           <td>
-            <%= campaign["campaign_name"] %>
-            <%= link_to admin_campaign_path(campaign["campaign_id"]), target: :_blank do %>
+            <%= campaign_log["campaign_name"] %>
+            <%= link_to admin_campaign_path(campaign_log["campaign_id"]), target: :_blank do %>
               <i class="icon fa fa-link"></i>
             <% end %>
           </td>
-          <td><%= campaign["receive_currency"] %></td>
-          <td><%= campaign["receive_amount"] %></td>
-          <td><%= campaign["remark"] %></td>
+          <td><%= campaign_log["receive_currency"] %></td>
+          <td><%= campaign_log["receive_amount"] %></td>
+          <td><%= campaign_log["remark"] %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
-<%= paginate @campaigns %>
+<%= paginate @campaign_logs %>

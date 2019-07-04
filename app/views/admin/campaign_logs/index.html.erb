@@ -4,6 +4,18 @@
   </div>
 </div>
 
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <b><%= @count %></b> results<br>
+    <div>
+      Total:
+      <% @sums.each do |sum| %>
+        <b><%= sum["amount"] %></b> <%= sum["currency"] %>,
+      <% end %>
+    </div>
+  </div>
+</div>
+
 <div class="card table-responsive">
   <table class="table table-bordered table-striped table-condensed">
     <thead>
