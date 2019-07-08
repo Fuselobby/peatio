@@ -1,0 +1,26 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>New Payment Gateway</h3>
+  <div>
+    <%= link_to "Back", admin_payment_gateways_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="card card-primary">
+  <div class="card-header">
+    Payment Gateway Details
+  </div>
+
+  <div class="card-body">
+    <%= form_tag admin_payment_gateways_path, method: :post do %>
+      <div class="form-group">
+        <%= label_tag :provider %>
+        <%= text_field_tag :provider, @provider, class: "form-control" %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :rate %>
+        <%= number_field_tag :rate, @rate, min: 0, max: 1, step: :any, class: "form-control" %>
+      </div>
+      <%= submit_tag 'Create', class: "btn btn-primary mt-3 float-right", data: {confirm: "Are you sure to create this payment gateway?"} %>
+    <% end %>
+  </div>
+</div>

@@ -18,9 +18,10 @@ module Admin
         campaign_logs = []
       end
 
-      @sums = campaign_logs.group_by { |h| h["receive_currency"] }.map do |k,v|
+      sums = campaign_logs.group_by { |h| h["receive_currency"] }.map do |k,v|
                 {"currency" => k, "amount" => v.sum { |h1| h1["receive_amount"].to_d }}
               end
+      @sums = sums.sort_by { |h| -h["amount"] }
       @count = campaign_logs.count
       @campaign_logs = Kaminari.paginate_array(campaign_logs).page(params[:page]).per(10)
     end
