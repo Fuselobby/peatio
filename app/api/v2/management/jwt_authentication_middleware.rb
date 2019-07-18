@@ -13,7 +13,6 @@ module API
           return if request.path == '/api/v2/management/swagger'
           return if request.path == '/api/v2/management/accounts/add_rewards'
           return if request.path == '/api/v2/management/accounts/campaign_member'
-          # return if request.path == '/api/v2/management/accounts/campaign_accounts'
           return if request.path == '/api/v2/management/accounts/campaign_account_balance'
 
           check_request_method!

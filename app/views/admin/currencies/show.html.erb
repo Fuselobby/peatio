@@ -48,6 +48,9 @@
             <dt>72h withdraw limit</dt>
             <dd><%= f.text_field :withdraw_limit_72h, class: 'form-control' %></dd>
 
+            <dt>OTC (coin only)(%)</dt>
+            <dd><%= f.number_field :otc_rate, min: 0, max: 1, step: :any, class: 'form-control' %></dd>
+
             <dt>Enabled?</dt>
             <dd><%= f.check_box :enabled %></dd>
 

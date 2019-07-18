@@ -164,7 +164,7 @@ class Currency < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20190116140939
+# Schema version: 20190711033859
 #
 # Table name: currencies
 #
@@ -188,6 +188,7 @@ end
 #  icon_url              :string(255)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
+#  otc_rate              :decimal(10, )    default(0)
 #
 # Indexes
 #

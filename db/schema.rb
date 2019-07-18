@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190702084717) do
+ActiveRecord::Schema.define(version: 20190712060736) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -87,6 +87,7 @@ ActiveRecord::Schema.define(version: 20190702084717) do
     t.string   "icon_url",              limit: 255
     t.datetime "created_at",                                                                    null: false
     t.datetime "updated_at",                                                                    null: false
+    t.decimal  "otc_rate",                           precision: 10,            default: 0
   end
 
   add_index "currencies", ["enabled"], name: "index_currencies_on_enabled", using: :btree
@@ -228,6 +229,24 @@ ActiveRecord::Schema.define(version: 20190702084717) do
   add_index "orders", ["type", "state", "member_id"], name: "index_orders_on_type_and_state_and_member_id", using: :btree
   add_index "orders", ["updated_at"], name: "index_orders_on_updated_at", using: :btree
 
+  create_table "otc_transactions", force: :cascade do |t|
+    t.integer  "member_id",           limit: 4
+    t.string   "currency_pay",        limit: 255,                                         null: false
+    t.string   "currency_get",        limit: 255,                                         null: false
+    t.string   "destination_address", limit: 255,                                         null: false
+    t.decimal  "price",                           precision: 32, scale: 16, default: 0.0, null: false
+    t.decimal  "exchange_fee",                    precision: 17, scale: 16, default: 0.0, null: false
+    t.decimal  "network_fee",                     precision: 17, scale: 16, default: 0.0, null: false
+    t.decimal  "amount_pay",                      precision: 32, scale: 16, default: 0.0, null: false
+    t.decimal  "amount_get",                      precision: 32, scale: 16, default: 0.0, null: false
+    t.datetime "created_at",                                                              null: false
+    t.datetime "updated_at",                                                              null: false
+    t.decimal  "volume",                          precision: 32, scale: 16, default: 0.0, null: false
+    t.string   "otc_type",            limit: 255,                                         null: false
+  end
+
+  add_index "otc_transactions", ["member_id"], name: "index_otc_transactions_on_member_id", using: :btree
+
   create_table "payment_addresses", force: :cascade do |t|
     t.string   "currency_id", limit: 10,                  null: false
     t.integer  "account_id",  limit: 4,                   null: false
@@ -336,4 +355,5 @@ ActiveRecord::Schema.define(version: 20190702084717) do
   add_index "withdraws", ["tid"], name: "index_withdraws_on_tid", using: :btree
   add_index "withdraws", ["type"], name: "index_withdraws_on_type", using: :btree
 
+  add_foreign_key "otc_transactions", "members"
 end
