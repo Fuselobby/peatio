@@ -69,6 +69,7 @@ module Admin
         enabled
         blockchain_key
         position
+        otc_rate
       ]
 
       if @currency.new_record?

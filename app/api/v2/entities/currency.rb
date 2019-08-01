@@ -125,6 +125,7 @@ module API
             example: -> { ::Currency.enabled.first.precision }
           }
         )
+
         expose(
           :icon_url,
           documentation: {
@@ -132,6 +133,14 @@ module API
             example: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Ethereum_logo_2014.svg'
           },
           if: -> (currency){ currency.icon_url.present? }
+        )
+
+        expose(
+          :otc_rate,
+          documentation: {
+            desc: 'Exchange fee for OTC',
+            example: -> { ::Currency.enabled.first.otc_rate }
+          }
         )
       end
     end

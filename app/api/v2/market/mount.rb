@@ -7,6 +7,7 @@ module API::V2
 
       before { authenticate! }
       before { trading_must_be_permitted! }
+      helpers Market::Helpers
 
       mount Market::Orders
       mount Market::Trades

@@ -1,0 +1,57 @@
+<h3>Wallets Balance</h3>
+<div class="card">
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+
+        <th class="text-right">Wallet Balance</th>
+
+        <th class="text-right">Last Updated</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @hot_wallets.each do |c| %>
+        <tr>
+          <td>
+            <b><%= c[:name] %></b>&nbsp;
+            <%= link_to admin_wallets_summary_index_path(name: c[:name]) do %>
+              <i class="fas fa-sync"></i>
+            <% end %>
+          </td>
+
+          <td>
+            <a href="<%= c.wallet_url %>" target="_blank">
+              <code class="text-info"><%= c.address%></code>
+            </a>
+          </td>
+
+          <td class="text-right"><%= c[:current_balance] %></td>
+          <td class="text-right"><b><%= c[:updated_at] %></b></td>
+        </tr>
+      <% end %>
+
+      <% @fee_wallets.each do |c| %>
+        <tr>
+          <td>
+            <b><%= c[:name] %></b>
+            <%= link_to admin_wallets_summary_index_path(currency_id: c[:currency_id], kind: c[:kind]) do %>
+              <i class="fas fa-sync"></i>
+            <% end %>
+          </td>
+
+          <td>
+            <a href="<%= c.wallet_url %>" target="_blank">
+              <code class="text-info"><%= c.address%></code>
+            </a>
+          </td>
+
+          <td class="text-right"><%= c[:current_balance] %></td>
+          <td class="text-right"><b><%= c[:updated_at] %></b></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -30,7 +30,7 @@ module API
                      values: { value: 1..200, message: 'public.order_book.invalid_ask_limit' },
                      default: 20,
                      desc: 'Limit the number of returned sell orders. Default to 20.'
-            optional :bids_limit, 
+            optional :bids_limit,
                      type: { value: Integer, message: 'public.order_book.non_integer_bid_limit' },
                      values: { value: 1..200, message: 'public.order_book.invalid_bid_limit' },
                      default: 20,
@@ -145,7 +145,80 @@ module API
           get "/:market/tickers/" do
             format_ticker Global[params[:market]].ticker
           end
+
+          desc 'Get details for OTC'
+          params do
+            requires :currency_get # frontend get the currency list using https://uat2.speza.io/api/v2/peatio/public/currencies
+            requires :currency_pay
+            optional :order_by,
+                     type: String,
+                     values: { value: %w(asc desc), message: 'public.trade.invalid_order_by' },
+                     default: 'desc',
+                     desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
+          end
+          get "/otc_details" do
+            currency_get = Currency.enabled.find_by(id: params[:currency_get])
+            currency_pay = Currency.enabled.find_by(id: params[:currency_pay])
+
+            if currency_get && currency_pay
+              # get latest_price for trades with given market
+              latest_price = Trade.where("market_id = ? OR market_id = ?", "#{params[:currency_get]}#{params[:currency_pay]}", "#{params[:currency_pay]}#{params[:currency_get]}").order(order_param).first.price
+              # this is the exchange_fee of the currency the user want to buy (set by our own in that currency)
+              exchange_fee = currency_get.otc_rate.to_d
+
+              # Network fees only consist of eth-based now
+              # TODO: Network fee for non-Eth
+              if gas_price = currency_get.options["gas_price"].present?
+                network_fee = gas_price.to_d/currency_get.base_factor.to_d
+              else
+                network_fee = 0.to_d
+              end
+
+              if ::Market.enabled.find_by(id: "#{params[:currency_get]}#{params[:currency_pay]}")
+                expected_exchange_rate = latest_price.to_d
+              elsif ::Market.enabled.find_by(id: "#{params[:currency_pay]}#{params[:currency_get]}")
+                # 1 divided by latest_price for the reverse trade
+                expected_exchange_rate = (1/latest_price).to_d
+              end
+
+              if expected_exchange_rate
+                # this api will return these 3 info like 'changelly', then frontend will use these info to do the calculation
+                # instead of doing calculation at backend, lets do at frontend
+                # will only call this api when currency change and recalculate and return back the following info
+                # if just changing the volume at frontend(which is either currency_pay or currency_get), it won't call this api
+                # these 3 info are based on 1 unit, frontend will times these info with the volume(which is amount_pay in our case) if needed
+                {
+                  expected_exchange_rate: expected_exchange_rate, # price meant for user
+                  exchange_fee: exchange_fee,
+                  network_fee: network_fee # no need times the volume or amount_pay
+                }
+                ######## CALCULATION ########
+                ### now this calculation is including network_fee(if there is) regardless off-chain or on-chain
+                ### CAUTION FOR ACCOUNTING ###
+                ### means profit for off-chain = exchange_fee*volume + network_fee; on-chain = exchange*volume
+
+                ### explanation from user side
+                # amount_user_pay_with_currency_pay = buy_volume_in_currency_pay
+                # amount_user_get_in_currency_get = (price - exchange_fee)*buy_volume_in_currency_pay - network_fee
+
+                ###### frontend can use below formulae to calculate another amount if user insert value into either amount_pay(amount pay with currency_pay) or amount_get(amount get with currency_get)
+                ### variable: expected_exchange_rate, exchange_fee, network_fee
+                # amount_get = (expected_exchange_rate - exchange_fee)*amount_pay - network_fee
+                # amount_pay = (amount_get + network_fee)/(expected_exchange_rate - exchange_fee)
+              else
+                body errors: 'Market not available'
+                status 422
+              end
+            else
+              body errors: 'Currency not available'
+              status 422
+            end
+
+          end
+
+
         end
+
       end
     end
   end

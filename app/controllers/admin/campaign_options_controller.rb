@@ -18,6 +18,7 @@ module Admin
         campaign_options = []
       end
 
+      @count = campaign_options.count
       @campaign_options = Kaminari.paginate_array(campaign_options).page(params[:page]).per(10)
     end
 

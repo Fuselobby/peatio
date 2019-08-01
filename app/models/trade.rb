@@ -17,11 +17,17 @@ class Trade < ApplicationRecord
 
   scope :h24, -> { where('created_at > ?', 24.hours.ago) }
 
+  scope :ordered, -> { order(funds: :desc) }
+
+  before_validation do
+    self.ask_member_uid = ask_member.uid
+    self.bid_member_uid = bid_member.uid
+  end
+
   after_commit on: :create do
     EventAPI.notify ['market', market_id, 'trade_completed'].join('.'), \
       Serializers::EventAPI::TradeCompleted.call(self)
   end
-
 
   class << self
     def latest_price(market)
@@ -151,22 +157,24 @@ class Trade < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20190213104708
+# Schema version: 20190620022012
 #
 # Table name: trades
 #
-#  id            :integer          not null, primary key
-#  price         :decimal(32, 16)  not null
-#  volume        :decimal(32, 16)  not null
-#  ask_id        :integer          not null
-#  bid_id        :integer          not null
-#  trend         :integer          not null
-#  market_id     :string(20)       not null
-#  ask_member_id :integer          not null
-#  bid_member_id :integer          not null
-#  funds         :decimal(32, 16)  not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id             :integer          not null, primary key
+#  price          :decimal(32, 16)  not null
+#  volume         :decimal(32, 16)  not null
+#  ask_id         :integer          not null
+#  bid_id         :integer          not null
+#  trend          :integer          not null
+#  market_id      :string(20)       not null
+#  ask_member_id  :integer          not null
+#  bid_member_id  :integer          not null
+#  funds          :decimal(32, 16)  not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  ask_member_uid :string(12)       not null
+#  bid_member_uid :string(12)       not null
 #
 # Indexes
 #

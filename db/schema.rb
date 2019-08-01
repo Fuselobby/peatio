@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.string "icon_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal  "otc_rate",                           precision: 10,            default: 0
     t.index ["enabled"], name: "index_currencies_on_enabled"
     t.index ["enabled"], name: "index_currencies_on_enabled_and_code"
     t.index ["position"], name: "index_currencies_on_position"
@@ -158,6 +159,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.string "state", limit: 16, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "referral_uid",    limit: 12
+    t.integer  "referrals_count", limit: 4,   default: 0
     t.index ["email"], name: "index_members_on_email", unique: true
   end
 
@@ -215,6 +218,24 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.index ["currency_id", "address"], name: "index_payment_addresses_on_currency_id_and_address", unique: true
   end
 
+  create_table "otc_transactions", force: :cascade do |t|
+    t.integer  "member_id",           limit: 4
+    t.string   "currency_pay",        limit: 255,                                         null: false
+    t.string   "currency_get",        limit: 255,                                         null: false
+    t.string   "destination_address", limit: 255,                                         null: false
+    t.decimal  "price",                           precision: 32, scale: 16, default: 0.0, null: false
+    t.decimal  "exchange_fee",                    precision: 17, scale: 16, default: 0.0, null: false
+    t.decimal  "network_fee",                     precision: 17, scale: 16, default: 0.0, null: false
+    t.decimal  "amount_pay",                      precision: 32, scale: 16, default: 0.0, null: false
+    t.decimal  "amount_get",                      precision: 32, scale: 16, default: 0.0, null: false
+    t.datetime "created_at",                                                              null: false
+    t.datetime "updated_at",                                                              null: false
+    t.decimal  "volume",                          precision: 32, scale: 16, default: 0.0, null: false
+    t.string   "otc_type",            limit: 255,                                         null: false
+  end
+
+  add_index "otc_transactions", ["member_id"], name: "index_otc_transactions_on_member_id", using: :btree
+
   create_table "revenues", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "code", null: false
     t.string "currency_id", null: false
@@ -241,6 +262,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.decimal "funds", precision: 32, scale: 16, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "ask_member_uid", limit: 12,                           null: false
+    t.string   "bid_member_uid", limit: 12,                           null: false
     t.index ["ask_id"], name: "index_trades_on_ask_id"
     t.index ["ask_member_id", "bid_member_id"], name: "index_trades_on_ask_member_id_and_bid_member_id"
     t.index ["bid_id"], name: "index_trades_on_bid_id"

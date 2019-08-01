@@ -101,6 +101,7 @@ class Currency < ApplicationRecord
       fiat: fiat? }
   end
 
+
   def summary
     locked  = Account.with_currency(code).sum(:locked)
     balance = Account.with_currency(code).sum(:balance)
@@ -163,7 +164,7 @@ class Currency < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20190225171726
+# Schema version: 20190711033859
 #
 # Table name: currencies
 #
@@ -187,6 +188,7 @@ end
 #  icon_url              :string(255)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
+#  otc_rate              :decimal(10, )    default(0)
 #
 # Indexes
 #

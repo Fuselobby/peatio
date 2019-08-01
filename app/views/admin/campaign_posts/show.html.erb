@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3><%= @campaign_post["subject"] %></h3>
+  <% if @campaign_post["campaign_id"].present? %>
+    <div class="dropdown">
+      <%= link_to "Edit", edit_admin_campaign_post_path(@campaign_post["id"]), class: "btn btn-primary mr-1" %>
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Back To
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <%= link_to "Campaign", admin_campaign_path(@campaign_post["campaign_id"]), class: "dropdown-item" %>
+        <%= link_to "Campaign Posts", admin_campaign_posts_path, class: "dropdown-item" %>
+      </div>
+    </div>
+  <% else %>
+    <div>
+      <%= link_to "Edit", edit_admin_campaign_post_path(@campaign_post["id"]), class: "btn btn-primary mr-1" %>
+      <%= link_to "Back", admin_campaign_posts_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>
+
+<div class="card card-primary">
+  <div class="card-header">
+    Campaign Post Details
+  </div>
+  <div class="card-body">
+    <!-- <div class="row d-flex align-items-center">
+      <div class="col-sm-6">
+        <div class="text-center">
+          <% if @image_url %>
+            <%= image_tag @image_url, size: "640x350" %>
+          <% else %>
+            <h3>NO IMAGE UPLOADED</h3>
+          <% end %>
+        </div>
+      </div>
+      <div class="col-sm-6"> -->
+        <dl class="row">
+          <strong class="col-sm-4 text-right">Created At</strong>
+          <dd class="col-sm-8"><%= Time.parse(@campaign_post["created_at"]) %><br></dd>
+          <strong class="col-sm-4 text-right">Published At</strong>
+          <dd class="col-sm-8">
+            <% if @campaign_post["published_at"] %>
+              <%= Time.parse(@campaign_post["published_at"]) %>
+            <% end %><br>
+          </dd>
+          <strong class="col-sm-4 text-right">Campaign</strong>
+          <dd class="col-sm-8">
+            <% if @campaign_post["campaign_id"] %>
+              <%= @campaign_post["campaign_name"] %>
+              <%= link_to admin_campaign_path(@campaign_post["campaign_id"]), target: :_blank do %>
+                <i class="icon fa fa-link"></i>
+              <% end %>
+            <% end %><br>
+          </dd>
+          <strong class="col-sm-4 text-right">Subject</strong>
+          <dd class="col-sm-8"><%= @campaign_post["subject"] %><br></dd>
+          <strong class="col-sm-4 text-right">Body</strong>
+          <dd class="col-sm-8"><%= @campaign_post["body"] %><br></dd>
+          <strong class="col-sm-4 text-right">Status</strong>
+          <dd class="col-sm-8"><%= @campaign_post["status"] %><br></dd>
+        </dl>
+      <!-- </div>
+    </div> -->
+  </div>
+</div>

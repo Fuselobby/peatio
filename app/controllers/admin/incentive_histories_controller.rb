@@ -2,8 +2,8 @@ module Admin
   class IncentiveHistoriesController < BaseController
     def index
       uri = URI("http://campaign:8002/api/v1/campaign_logs")
-      params = { user_id: current_user.uid }
-      uri.query = URI.encode_www_form(params)
+      data = { user_id: current_user.uid }
+      uri.query = URI.encode_www_form(data)
 
       res = Net::HTTP.get_response(uri)
 
@@ -14,7 +14,12 @@ module Admin
         campaign_logs = []
       end
 
-      @campaigns = Kaminari.paginate_array(campaign_logs).page(params[:page]).per(10)
+      sums = campaign_logs.group_by { |h| h["receive_currency"] }.map do |k,v|
+                {"currency" => k, "amount" => v.sum { |h1| h1["receive_amount"].to_d }}
+              end
+      @sums = sums.sort_by { |h| -h["amount"] }
+      @count = campaign_logs.count
+      @campaign_logs = Kaminari.paginate_array(campaign_logs).page(params[:page]).per(10)
     end
 
   end

@@ -40,6 +40,8 @@ class Deposit < ApplicationRecord
       after do
         plus_funds
         record_complete_operations!
+        deposit_campaign
+        deposit_referral_campaign
       end
     end
     event :skip do
@@ -92,6 +94,59 @@ class Deposit < ApplicationRecord
         AMQPQueue.enqueue(:deposit_collection, id: id)
       end
     end
+  end
+
+  def trigger_campaigns(reward_user, campaign_type, source_user_id=nil, remark=nil)
+    begin
+      ActiveRecord::Base.transaction do
+        uri = URI("http://campaign:8002/api/v1/campaigns/trigger_logs")
+        req = Net::HTTP::Post.new(uri)
+        campaign_log_data = {
+          user_id: reward_user.uid,
+          audience_type: 'All Users',
+          campaign_type: campaign_type,
+          source_type: self.class.name,
+          source_id: id,
+          source_user_id: source_user_id,
+          remark: remark,
+          amount: amount,
+          fee: fee
+        }
+        req.set_form_data(campaign_log_data)
+
+        res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+          http.request(req)
+        end
+
+        case res
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          @new_campaign_logs = JSON.parse(res.body)
+          if @new_campaign_logs.present?
+            @new_campaign_logs.each do |n|
+              log_currency = Currency.find_by(id: n["receive_currency"], enabled: true)
+              log_account = member.accounts.find_by(currency: log_currency)
+              log_account.plus_funds(n["receive_amount"].to_d) if log_account
+
+              Account.record_complete_operations(n["receive_amount"].to_d, log_currency, reward_user)
+            end
+          end
+        else
+        end
+      end
+    rescue Exception => ex
+      puts ex.message
+      puts ex.backtrace.join("\n")
+    end
+  end
+
+  def deposit_campaign
+    trigger_campaigns(member, ["Deposit%#{currency_id}"].to_json)
+  end
+
+  def deposit_referral_campaign
+    referrer = Member.find_by(uid: member.referral_uid)
+    remark = "The person you referred, #{member.email} has made a deposit!"
+    trigger_campaigns(referrer, ["Deposit%#{currency_id}","Referral"].to_json, member.uid, remark) if referrer
   end
 
   private
