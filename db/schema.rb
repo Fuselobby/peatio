@@ -237,11 +237,11 @@ ActiveRecord::Schema.define(version: 20190712060736) do
     t.decimal  "price",                           precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "exchange_fee",                    precision: 17, scale: 16, default: 0.0, null: false
     t.decimal  "network_fee",                     precision: 17, scale: 16, default: 0.0, null: false
+    t.decimal  "volume",                          precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "amount_pay",                      precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "amount_get",                      precision: 32, scale: 16, default: 0.0, null: false
     t.datetime "created_at",                                                              null: false
     t.datetime "updated_at",                                                              null: false
-    t.decimal  "volume",                          precision: 32, scale: 16, default: 0.0, null: false
     t.string   "otc_type",            limit: 255,                                         null: false
   end
 

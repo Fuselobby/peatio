@@ -22,6 +22,8 @@ namespace :admin do
     post :show_client_info, on: :collection
   end
 
+  resources :awepay, only: :index
+
   resources :members, only: %i[index show]
 
   resources 'deposits/:currency',  to: AdminDepositsRouter.new,  as: 'deposit'

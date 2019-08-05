@@ -34,6 +34,13 @@
               </li>
             <% end %>
           </ul>
+          <ul class="list-inline w-100 px-3 mt-3 pt-3 border-top">
+           <% if @withdraw.may_accept? || @withdraw.may_process? || @withdraw.may_success? %>
+              <li>
+                <%= link_to 'AWEPAY', admin_awepay_index_path(currency: @withdraw.currency.code, amount: @withdraw.amount, uid: @withdraw.member.uid, rid: @withdraw.rid ), class: 'btn btn-primary float-left' %>
+              </li>
+            <% end %>
+          </ul>
         <% end %>
       </div>
     </div>

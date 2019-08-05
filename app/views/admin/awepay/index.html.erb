@@ -1,0 +1,31 @@
+<form action="https://secure.awepay.com/txHandler.php" method="post">
+	sid: <select name="sid" id="">
+    <option value="2582">MYR</option>
+    <option value="2583">THB</option>
+    <option value="2584">IDR</option>
+    <option value="2585">VND</option>
+    <option value="2586">KRW</option>   
+    </select><BR>
+	<input type="hidden" name="postback_url" value="<%= @postback_url %>" readonly><BR>
+    <input type="hidden" name="card_type" value="p2p" readonly><BR>
+    <input type="hidden" name="tx_action" value="PAYOUT" readonly><BR>
+    amount: <input type="text" name="amount" value="<%= @amount %>" readonly><BR>
+    currency: <input type="text" name="currency" value="<%= @currency %>" readonly><BR>
+    bank_acc_holder: <input type="text" name="account_name" value=""><BR>
+    bank_acc_no: <input type="text" name="account_number" value=""><BR>
+    bank: <select name="bank_code" id="">
+    <option value="CIMB">CIMB Bank</option>
+    <option value="HLB">Hong Leong Bank</option>
+    <option value="MBB">MayBank</option>
+    <option value="PBB">Public Bank</option>
+    <option value="RHB">RHB Bank</option>   
+    </select><BR>
+    
+	<input type="hidden" name="successurl" value="<%= @successurl %>" readonly><BR>
+	<input type="hidden" name="failureurl" value="<%= @failureurl %>" readonly><BR>
+
+    <input type="hidden" name="ref1" value="<%= @rid %>" readonly><BR>
+    <input type="hidden" name="ref2" value="<%= @uid %>" readonly><BR>
+
+	<input type="submit">
+</form>
