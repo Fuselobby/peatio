@@ -11,8 +11,8 @@ module Admin
       @successurl = "#{request.referrer}"
       @failureurl = "#{request.referrer}"
 
-      @uid = params[:uid]
-      @rid = "#{params[:rid]}..#{@amount}#{@currency}"
+      @ref1 = params[:rid]
+      @ref2 = "#{params[:uid]}..#{@amount}#{@currency}"
     end
 
     def withdraw
