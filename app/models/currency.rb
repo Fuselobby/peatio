@@ -164,7 +164,7 @@ class Currency < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20190711033859
+# Schema version: 20190712060736
 #
 # Table name: currencies
 #
@@ -192,7 +192,6 @@ end
 #
 # Indexes
 #
-#  index_currencies_on_enabled           (enabled)
-#  index_currencies_on_enabled_and_code  (enabled)
-#  index_currencies_on_position          (position)
+#  index_currencies_on_enabled   (enabled)
+#  index_currencies_on_position  (position)
 #
