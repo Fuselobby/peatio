@@ -1,11 +1,11 @@
 module Admin
   class AwepayController < BaseController
     # Fees 
-    AWEPAY_MYR_FEE = 3.5
-    AWEPAY_IDR_FEE = 3.5
-    AWEPAY_THB_FEE = 3.5
-    AWEPAY_VND_FEE = 3.5
-    AWEPAY_KRW_FEE = 4
+    AWEPAY_MYR_FEE = 2.5
+    AWEPAY_IDR_FEE = 2.5
+    AWEPAY_THB_FEE = 2.5
+    AWEPAY_VND_FEE = 2.5
+    AWEPAY_KRW_FEE = 3
 
     def index
       @amount = value_after_fee(params[:amount], params[:currency])
