@@ -10,7 +10,7 @@ module Admin
     def index
       @amount = value_after_fee(params[:amount], params[:currency])
       @currency = params[:currency].upcase
-      @postback_url = "https://uat2.speza.io/api/v1/applogic/callback/awepay_withdraw"
+      @postback_url = "https://blockchain.mundoexchange.io/api/v1/applogic/callback/awepay_withdraw"
 
       @successurl = "#{request.referrer}"
       @failureurl = "#{request.referrer}"
