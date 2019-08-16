@@ -160,8 +160,17 @@ module API
             currency_pay = Currency.enabled.find_by(id: params[:currency_pay])
 
             if currency_get && currency_pay
-              # get latest_price for trades with given market
-              latest_price = Trade.where("market_id = ? OR market_id = ?", "#{params[:currency_get]}#{params[:currency_pay]}", "#{params[:currency_pay]}#{params[:currency_get]}").order(order_param).first.price
+              # get the average of 10 latest_price for trades with given market
+              trades = Trade.where("market_id = ? OR market_id = ?", "#{params[:currency_get]}#{params[:currency_pay]}", "#{params[:currency_pay]}#{params[:currency_get]}").order(order_param).first(10)
+
+              sum = 0
+
+              trades.each do |trade|
+                sum = sum + trade.price
+              end
+
+              average_price = sum / trades.size
+
               # this is the exchange_fee of the currency the user want to buy (set by our own in that currency)
               exchange_fee = currency_get.otc_rate.to_d
 
@@ -174,10 +183,10 @@ module API
               end
 
               if ::Market.enabled.find_by(id: "#{params[:currency_get]}#{params[:currency_pay]}")
-                expected_exchange_rate = latest_price.to_d
+                expected_exchange_rate = average_price.to_d
               elsif ::Market.enabled.find_by(id: "#{params[:currency_pay]}#{params[:currency_get]}")
-                # 1 divided by latest_price for the reverse trade
-                expected_exchange_rate = (1/latest_price).to_d
+                # 1 divided by average_price for the reverse trade
+                expected_exchange_rate = (1/average_price).to_d
               end
 
               if expected_exchange_rate

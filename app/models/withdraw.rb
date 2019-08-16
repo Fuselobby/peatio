@@ -250,9 +250,8 @@ private
     AMQPQueue.enqueue(:withdraw_coin, id: id) if coin?
   end
 end
-
 # == Schema Information
-# Schema version: 20181120113445
+# Schema version: 20190712060736
 #
 # Table name: withdraws
 #
@@ -269,6 +268,7 @@ end
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
 #  rid          :string(95)       not null
+#  note         :string(256)
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime
@@ -282,4 +282,6 @@ end
 #  index_withdraws_on_member_id             (member_id)
 #  index_withdraws_on_tid                   (tid)
 #  index_withdraws_on_type                  (type)
+#
+
 #

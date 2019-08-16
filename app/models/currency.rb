@@ -164,7 +164,7 @@ class Currency < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20190711033859
+# Schema version: 20190712060736
 #
 # Table name: currencies
 #
@@ -181,7 +181,7 @@ end
 #  withdraw_limit_24h    :decimal(32, 16)  default(0.0), not null
 #  withdraw_limit_72h    :decimal(32, 16)  default(0.0), not null
 #  position              :integer          default(0), not null
-#  options               :string(1000)     default({}), not null
+#  options               :string(1000)     default({})
 #  enabled               :boolean          default(TRUE), not null
 #  base_factor           :integer          default(1), not null
 #  precision             :integer          default(8), not null

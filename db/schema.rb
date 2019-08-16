@@ -36,6 +36,12 @@ ActiveRecord::Schema.define(version: 20190712060736) do
     t.datetime "created_at"
   end
 
+  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
+    t.string   "value",      limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
   create_table "assets", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
@@ -80,7 +86,7 @@ ActiveRecord::Schema.define(version: 20190712060736) do
     t.decimal  "withdraw_limit_24h",                 precision: 32, scale: 16, default: 0.0,    null: false
     t.decimal  "withdraw_limit_72h",                 precision: 32, scale: 16, default: 0.0,    null: false
     t.integer  "position",              limit: 4,                              default: 0,      null: false
-    t.string   "options",               limit: 1000,                           default: "{}",   null: false
+    t.string   "options",               limit: 1000,                           default: "{}"
     t.boolean  "enabled",                                                      default: true,   null: false
     t.integer  "base_factor",           limit: 8,                              default: 1,      null: false
     t.integer  "precision",             limit: 1,                              default: 8,      null: false
@@ -342,6 +348,7 @@ ActiveRecord::Schema.define(version: 20190712060736) do
     t.string   "type",         limit: 30,                            null: false
     t.string   "tid",          limit: 64,                            null: false
     t.string   "rid",          limit: 95,                            null: false
+    t.string   "note",         limit: 256
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
     t.datetime "completed_at"
