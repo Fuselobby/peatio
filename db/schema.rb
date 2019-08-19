@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190712060736) do
+ActiveRecord::Schema.define(version: 20190819104335) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -34,12 +34,6 @@ ActiveRecord::Schema.define(version: 20190712060736) do
     t.string   "result",     limit: 255,   null: false
     t.text     "data",       limit: 65535
     t.datetime "created_at"
-  end
-
-  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
-    t.string   "value",      limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
   end
 
   create_table "assets", force: :cascade do |t|
@@ -86,7 +80,7 @@ ActiveRecord::Schema.define(version: 20190712060736) do
     t.decimal  "withdraw_limit_24h",                 precision: 32, scale: 16, default: 0.0,    null: false
     t.decimal  "withdraw_limit_72h",                 precision: 32, scale: 16, default: 0.0,    null: false
     t.integer  "position",              limit: 4,                              default: 0,      null: false
-    t.string   "options",               limit: 1000,                           default: "{}"
+    t.string   "options",               limit: 1000,                           default: "{}",   null: false
     t.boolean  "enabled",                                                      default: true,   null: false
     t.integer  "base_factor",           limit: 8,                              default: 1,      null: false
     t.integer  "precision",             limit: 1,                              default: 8,      null: false
@@ -136,6 +130,22 @@ ActiveRecord::Schema.define(version: 20190712060736) do
 
   add_index "expenses", ["currency_id"], name: "index_expenses_on_currency_id", using: :btree
   add_index "expenses", ["reference_type", "reference_id"], name: "index_expenses_on_reference_type_and_reference_id", using: :btree
+
+  create_table "ext_trades", force: :cascade do |t|
+    t.decimal  "price",                     precision: 32, scale: 16
+    t.decimal  "volume",                    precision: 32, scale: 16
+    t.integer  "ask_id",         limit: 4
+    t.integer  "bid_id",         limit: 4
+    t.integer  "trend",          limit: 4
+    t.string   "market_id",      limit: 20
+    t.integer  "ask_member_id",  limit: 4
+    t.integer  "bid_member_id",  limit: 4
+    t.decimal  "funds",                     precision: 32, scale: 16
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
+    t.string   "ask_member_uid", limit: 12
+    t.string   "bid_member_uid", limit: 12
+  end
 
   create_table "liabilities", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
@@ -348,7 +358,6 @@ ActiveRecord::Schema.define(version: 20190712060736) do
     t.string   "type",         limit: 30,                            null: false
     t.string   "tid",          limit: 64,                            null: false
     t.string   "rid",          limit: 95,                            null: false
-    t.string   "note",         limit: 256
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
     t.datetime "completed_at"

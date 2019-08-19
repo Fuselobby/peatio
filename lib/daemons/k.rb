@@ -57,10 +57,18 @@ def k1(market, start)
   trades = Trade
              .with_market(market)
              .where('created_at >= ? AND created_at < ?', start, 1.minutes.since(start))
-             .pluck(:price, :volume)
-  return nil if trades.count == 0
+  bot_trades = ExtTrade
+                .with_market(market)
+                .where('created_at >= ? AND created_at < ?', start, 1.minutes.since(start))
 
-  prices, volumes = trades.transpose
+  # Combine trades and bot trades
+  all_trades = trades + bot_trades
+  all_trades = all_trades.sort{|a,b| a.created_at <=> b.created_at }
+
+  trades_prices = all_trades.collect { |t| [t.price, t.volume] }
+  return nil if trades_prices.count == 0
+
+  prices, volumes = trades_prices.transpose
   [start.to_i, prices.first.to_f, prices.max.to_f, prices.min.to_f, prices.last.to_f, volumes.sum.to_f.round(4)]
 end
 

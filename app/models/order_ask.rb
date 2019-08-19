@@ -3,6 +3,7 @@
 
 class OrderAsk < Order
   has_many :trades, -> { order(id: :asc) }, foreign_key: :ask_id
+  has_many :ext_trades, -> { order(id: :asc) }, foreign_key: :ask_id
   scope :matching_rule, -> { order(price: :asc, created_at: :asc) }
 
   validates :price,

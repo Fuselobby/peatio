@@ -3,6 +3,7 @@
 
 class OrderBid < Order
   has_many :trades, foreign_key: :bid_id
+  has_many :ext_trades, foreign_key: :bid_id
   scope :matching_rule, -> { order(price: :desc, created_at: :asc) }
 
   validates :price, presence: true, if: :is_limit_order?

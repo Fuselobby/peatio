@@ -80,7 +80,32 @@ module Matching
 
         strike(@trade, @ask, accounts_table["#{@ask.ask}:#{@ask.member_id}"], accounts_table["#{@ask.bid}:#{@ask.member_id}"])
         strike(@trade, @bid, accounts_table["#{@bid.bid}:#{@bid.member_id}"], accounts_table["#{@bid.ask}:#{@bid.member_id}"])
-        @trade.record_complete_operations!
+
+        # Check if trade is bot_trader
+        bot_trade = (@trade.ask_member_id == @trade.bid_member_id) and Member.find(@trade.ask_member_id).email.include? "trade.com"
+
+        puts "bot_trade? #{bot_trade}"
+        puts "ask_member_id = #{@trade.ask_member_id}"
+        puts "bid_member_id = #{@trade.bid_member_id}"
+        puts "Email: #{Member.find(@trade.ask_member_id).email}"
+
+        puts
+
+        if bot_trade
+          # Save to different table
+          @trade = ExtTrade.new \
+            ask:           @ask,
+            ask_member_id: @ask.member_id,
+            bid:           @bid,
+            bid_member_id: @bid.member_id,
+            price:         @price,
+            volume:        @volume,
+            funds:         @funds,
+            market:        @market,
+            trend:         _trend
+        else
+          @trade.record_complete_operations!
+        end
 
         ([@ask, @bid] + accounts_table.values).map do |record|
           table     = record.class.arel_table
