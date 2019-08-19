@@ -71,15 +71,9 @@ module API
                      desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
           end
           get ":market/trades" do
-            trades = Trade.order(order_param)
-                      .tap { |q| q.where!(market: params[:market]) if params[:market] }
-            bot_trades = ExtTrade.order(order_param)
-                      .tap { |q| q.where!(market: params[:market]) if params[:market] }
-            # Combine trades and bot trades
-            all_trades = trades + bot_trades
-            all_trades = all_trades.sort{|a,b| a.created_at <=> b.created_at }
-                 
-            all_trades.tap { |q| present paginate(q), with: API::V2::Entities::Trade }
+            ExtTrade.order(order_param)
+                 .tap { |q| q.where!(market: params[:market]) if params[:market] }
+                 .tap { |q| present paginate(q), with: API::V2::Entities::Trade }
           end
 
           desc 'Get depth or specified market. Both asks and bids are sorted from highest price to lowest.'

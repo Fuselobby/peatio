@@ -84,16 +84,8 @@ module Matching
         # Check if trade is bot_trader
         bot_trade = (@trade.ask_member_id == @trade.bid_member_id) and Member.find(@trade.ask_member_id).email.include? "trade.com"
 
-        puts "bot_trade? #{bot_trade}"
-        puts "ask_member_id = #{@trade.ask_member_id}"
-        puts "bid_member_id = #{@trade.bid_member_id}"
-        puts "Email: #{Member.find(@trade.ask_member_id).email}"
-
-        puts
-
-        if bot_trade
-          # Save to different table
-          @trade = ExtTrade.new \
+        # Save all trades (including bots) to this table
+        @all_trades = ExtTrade.new \
             ask:           @ask,
             ask_member_id: @ask.member_id,
             bid:           @bid,
@@ -103,9 +95,9 @@ module Matching
             funds:         @funds,
             market:        @market,
             trend:         _trend
-        else
-          @trade.record_complete_operations!
-        end
+
+        # Only record transaction if trade not done by bots
+        @trade.record_complete_operations! unless bot_trade
 
         ([@ask, @bid] + accounts_table.values).map do |record|
           table     = record.class.arel_table
@@ -130,7 +122,9 @@ module Matching
           end
         end
 
-        @trade.save(validate: false)
+        @trade.save(validate:false) unless bot_trade
+
+        @all_trades.save(validate:false)
       end
     end
 
