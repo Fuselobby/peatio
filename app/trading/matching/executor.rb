@@ -122,9 +122,9 @@ module Matching
           end
         end
 
-        @trade.save(validate:false) unless bot_trade
+        @trade.save #unless bot_trade
 
-        @all_trades.save(validate:false)
+        @all_trades.save
       end
     end
 

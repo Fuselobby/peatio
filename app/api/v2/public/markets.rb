@@ -71,7 +71,7 @@ module API
                      desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
           end
           get ":market/trades" do
-            ExtTrade.order(order_param)
+            Trade.order(order_param)
                  .tap { |q| q.where!(market: params[:market]) if params[:market] }
                  .tap { |q| present paginate(q), with: API::V2::Entities::Trade }
           end
