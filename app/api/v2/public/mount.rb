@@ -10,6 +10,7 @@ module API
         mount Public::Markets
         mount Public::MemberLevels
         mount Public::Tools
+        mount Public::Notices
       end
     end
   end

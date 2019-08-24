@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190712060736) do
+ActiveRecord::Schema.define(version: 20190815105500) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -183,6 +183,15 @@ ActiveRecord::Schema.define(version: 20190712060736) do
   end
 
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
+
+  create_table "notices", force: :cascade do |t|
+    t.string   "notice_title", limit: 255,                  null: false
+    t.text     "description",  limit: 65535
+    t.boolean  "enabled",                    default: true, null: false
+    t.datetime "from_date"
+    t.datetime "to_date"
+    t.datetime "created_at",                                null: false
+  end
 
   create_table "operations_accounts", force: :cascade do |t|
     t.integer  "code",          limit: 3,   null: false

@@ -199,6 +199,13 @@
           <% end %>
         </li>
 
+        <li class="list-icon-item <%= check_active('notices') %>">
+          <%= link_to admin_notices_path do %>
+            <i class="icon fas fa-newspaper"></i>
+            <span class="menu-text">Notices</span>
+          <% end %>
+       </li>
+
         <li class="list-icon-item <%= check_active('payment_gateways') %>">
           <%= link_to admin_payment_gateways_path do %>
             <i class="icon fa fa-money-check-alt"></i>
