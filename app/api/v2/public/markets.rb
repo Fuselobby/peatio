@@ -126,6 +126,38 @@ module API
               .get_ohlc(params.slice(:limit, :time_from, :time_to))
           end
 
+          desc 'Get OHLC(k line) of all markets.'
+          params do
+            optional :period,
+                     type: { value: Integer, message: 'public.k_line.non_integer_period' },
+                     values: { value: KLineService::AVAILABLE_POINT_PERIODS, message: 'public.k_line.invalid_period' },
+                     default: 1,
+                     desc: "Time period of K line, default to 1. You can choose between #{KLineService::AVAILABLE_POINT_PERIODS.join(', ')}"
+            optional :time_from,
+                     type: { value: Integer, message: 'public.k_line.non_integer_time_from' },
+                     allow_blank: { value: false, message: 'public.k_line.empty_time_from' },
+                     desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data after that time will be returned."
+            optional :time_to,
+                     type: { value: Integer, message: 'public.k_line.non_integer_time_to' },
+                     allow_blank: { value: false, message: 'public.k_line.empty_time_to' },
+                     desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data till that time will be returned."
+            optional :limit,
+                     type: { value: Integer, message: 'public.k_line.non_integer_limit' },
+                     values: { value: KLineService::AVAILABLE_POINT_LIMITS, message: 'public.k_line.invalid_limit' },
+                     default: 30,
+                     desc: "Limit the number of returned data points default to 30. Ignored if time_from and time_to are given."
+          end
+          get "/k-line" do
+            kline = {}
+            ::Market.all.enabled.ids.each do |market|
+              kline[market] = KLineService
+                              .new(market, params[:period])
+                              .get_ohlc(params.slice(:limit, :time_from, :time_to))
+            end
+
+            kline
+          end
+
           desc 'Get ticker of all markets.'
           get "/tickers" do
             ::Market.enabled.ordered.inject({}) do |h, m|
