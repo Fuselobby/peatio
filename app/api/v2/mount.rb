@@ -60,7 +60,9 @@ module API
                                   API::V2::Entities::Order,
                                   API::V2::Entities::Trade,
                                   API::V2::Entities::Withdraw,
-                                  API::V2::Entities::Notice
+                                  API::V2::Entities::Notice,
+                                  API::V2::Entities::CryptoInfo,
+                                  API::V2::Entities::CryptoReport
                                 ],
                                 security_definitions: {
                                   Bearer: {

@@ -11,7 +11,7 @@ class Notice < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20190815105500
+# Schema version: 20190911130000
 #
 # Table name: notices
 #
@@ -19,7 +19,7 @@ end
 #  notice_title :string(255)      not null
 #  description  :text(65535)
 #  enabled      :boolean          default(TRUE), not null
-#  from_date    :datetime
-#  to_date      :datetime
+#  from_date    :datetime         not null
+#  to_date      :datetime         not null
 #  created_at   :datetime         not null
 #

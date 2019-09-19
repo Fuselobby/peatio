@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190815105500) do
+ActiveRecord::Schema.define(version: 20190911130000) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -66,6 +66,17 @@ ActiveRecord::Schema.define(version: 20190815105500) do
 
   add_index "blockchains", ["key"], name: "index_blockchains_on_key", unique: true, using: :btree
   add_index "blockchains", ["status"], name: "index_blockchains_on_status", using: :btree
+
+  create_table "crypto_infos", force: :cascade do |t|
+    t.string "crypto",  limit: 255
+    t.text   "context", limit: 65535
+  end
+
+  create_table "crypto_reports", force: :cascade do |t|
+    t.string "crypto",  limit: 255
+    t.text   "context", limit: 65535
+    t.string "lang",    limit: 255
+  end
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name",                  limit: 255
@@ -131,6 +142,13 @@ ActiveRecord::Schema.define(version: 20190815105500) do
   add_index "expenses", ["currency_id"], name: "index_expenses_on_currency_id", using: :btree
   add_index "expenses", ["reference_type", "reference_id"], name: "index_expenses_on_reference_type_and_reference_id", using: :btree
 
+  create_table "ico_discovery", force: :cascade do |t|
+    t.string  "name",     limit: 255
+    t.string  "longname", limit: 255
+    t.string  "altname",  limit: 255
+    t.boolean "enabled",              default: true, null: false
+  end
+
   create_table "liabilities", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
@@ -188,8 +206,8 @@ ActiveRecord::Schema.define(version: 20190815105500) do
     t.string   "notice_title", limit: 255,                  null: false
     t.text     "description",  limit: 65535
     t.boolean  "enabled",                    default: true, null: false
-    t.datetime "from_date"
-    t.datetime "to_date"
+    t.datetime "from_date",                                 null: false
+    t.datetime "to_date",                                   null: false
     t.datetime "created_at",                                null: false
   end
 
