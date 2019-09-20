@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190819104335) do
+ActiveRecord::Schema.define(version: 20190911130000) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -66,6 +66,17 @@ ActiveRecord::Schema.define(version: 20190819104335) do
 
   add_index "blockchains", ["key"], name: "index_blockchains_on_key", unique: true, using: :btree
   add_index "blockchains", ["status"], name: "index_blockchains_on_status", using: :btree
+
+  create_table "crypto_infos", force: :cascade do |t|
+    t.string "crypto",  limit: 255
+    t.text   "context", limit: 65535
+  end
+
+  create_table "crypto_records", force: :cascade do |t|
+    t.string "crypto",  limit: 255
+    t.text   "context", limit: 65535
+    t.string "lang",    limit: 255
+  end
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name",                  limit: 255
@@ -147,6 +158,26 @@ ActiveRecord::Schema.define(version: 20190819104335) do
     t.string   "bid_member_uid", limit: 12
   end
 
+  add_index "ext_trades", ["ask_id"], name: "index_ext_trades_on_ask_id", using: :btree
+  add_index "ext_trades", ["ask_member_id", "bid_member_id"], name: "index_ext_trades_on_ask_member_id_and_bid_member_id", using: :btree
+  add_index "ext_trades", ["bid_id"], name: "index_ext_trades_on_bid_id", using: :btree
+  add_index "ext_trades", ["created_at"], name: "index_ext_trades_on_created_at", using: :btree
+  add_index "ext_trades", ["market_id", "created_at"], name: "index_ext_trades_on_market_id_and_created_at", using: :btree
+
+  create_table "ico_discovery", force: :cascade do |t|
+    t.string  "name",     limit: 255
+    t.string  "longname", limit: 255
+    t.string  "altname",  limit: 255
+    t.boolean "enabled",              default: true, null: false
+  end
+
+  create_table "klines", force: :cascade do |t|
+    t.integer  "period",     limit: 4
+    t.text     "data",       limit: 16777215
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
   create_table "liabilities", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
@@ -162,6 +193,24 @@ ActiveRecord::Schema.define(version: 20190819104335) do
   add_index "liabilities", ["currency_id"], name: "index_liabilities_on_currency_id", using: :btree
   add_index "liabilities", ["member_id"], name: "index_liabilities_on_member_id", using: :btree
   add_index "liabilities", ["reference_type", "reference_id"], name: "index_liabilities_on_reference_type_and_reference_id", using: :btree
+
+  create_table "liquidity_trades", force: :cascade do |t|
+    t.decimal  "price",                      precision: 32, scale: 16
+    t.decimal  "volume",                     precision: 32, scale: 16
+    t.integer  "ask_id",         limit: 4
+    t.integer  "bid_id",         limit: 4
+    t.integer  "trend",          limit: 4
+    t.string   "market_id",      limit: 20
+    t.integer  "ask_member_id",  limit: 4
+    t.integer  "bid_member_id",  limit: 4
+    t.decimal  "funds",                      precision: 32, scale: 16
+    t.datetime "created_at",                                                               null: false
+    t.datetime "updated_at",                                                               null: false
+    t.string   "ask_member_uid", limit: 12
+    t.string   "bid_member_uid", limit: 12
+    t.string   "status",         limit: 255,                           default: "pending", null: false
+    t.string   "response",       limit: 255
+  end
 
   create_table "markets", force: :cascade do |t|
     t.string   "ask_unit",       limit: 10,                                          null: false
@@ -199,6 +248,15 @@ ActiveRecord::Schema.define(version: 20190819104335) do
   end
 
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
+
+  create_table "notices", force: :cascade do |t|
+    t.string   "notice_title", limit: 255,                  null: false
+    t.text     "description",  limit: 65535
+    t.boolean  "enabled",                    default: true, null: false
+    t.datetime "from_date"
+    t.datetime "to_date"
+    t.datetime "created_at",                                null: false
+  end
 
   create_table "operations_accounts", force: :cascade do |t|
     t.integer  "code",          limit: 3,   null: false

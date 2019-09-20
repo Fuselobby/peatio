@@ -16,6 +16,7 @@ namespace :admin do
   end
   resources :analysts, except: %i[edit destroy]
   resources :markets, except: %i[edit destroy]
+  resources :notices, except: %i[edit destroy]
   resources :currencies, except: %i[edit destroy]
   resources :blockchains, except: %i[edit destroy]
   resources :wallets, except: %i[edit destroy] do
@@ -29,6 +30,7 @@ namespace :admin do
   resources 'deposits/:currency',  to: AdminDepositsRouter.new,  as: 'deposit'
   resources 'withdraws/:currency', to: AdminWithdrawsRouter.new, as: 'withdraw'
 
+  
   %i[liability asset revenue expense].each do |type|
     get "operations/#{type.to_s.pluralize}/(:currency)",
       to: AdminOperationsRouter.new(type),

@@ -18,6 +18,7 @@ module Admin
 
     def create
       @blockchain = Blockchain.new(blockchain_params)
+
       if @blockchain.save
         activity_record(user: current_user.id, action: 'create', result: 'succeed', topic: 'blockchains')
         redirect_to admin_blockchains_path

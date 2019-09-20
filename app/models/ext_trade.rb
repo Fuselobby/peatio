@@ -154,7 +154,7 @@ class ExtTrade < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20190819104335
+# Schema version: 20190911130000
 #
 # Table name: ext_trades
 #
@@ -172,4 +172,12 @@ end
 #  updated_at     :datetime         not null
 #  ask_member_uid :string(12)
 #  bid_member_uid :string(12)
+#
+# Indexes
+#
+#  index_ext_trades_on_ask_id                           (ask_id)
+#  index_ext_trades_on_ask_member_id_and_bid_member_id  (ask_member_id,bid_member_id)
+#  index_ext_trades_on_bid_id                           (bid_id)
+#  index_ext_trades_on_created_at                       (created_at)
+#  index_ext_trades_on_market_id_and_created_at         (market_id,created_at)
 #

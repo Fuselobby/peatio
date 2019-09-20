@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-6">
+    <h3>Notices</h3>
+  </div>
+  <div class="col-6">
+    <%= link_to raw("<i class='fa fa-plus mr-2'></i> New notice"), new_admin_notice_path, class: "btn btn-primary float-right mb-3" %>
+  </div>
+</div>
+
+<div class="card">
+  <%= table_for @notices, class: 'table table-bordered table-striped' do |t| %>
+    <% t.column :id, 'ID' %>
+
+    <% t.column :notice_title, 'Title', class: 'col-xs-2' %>
+
+    <% t.column :from_date, 'From Date', class: 'col-xs-2' %>
+
+    <% t.column :to_date, 'To Date', class: 'col-xs-2' %>
+
+
+    <% t.column 'Created at', class: 'col-xs-3' do |x| %>
+      <%= l(x.created_at, format: :long) %>
+    <% end %>
+
+    <% t.column 'Enabled', class: 'col-xs-2' do |x| %>
+      <% if x.enabled? %>
+        <span class="text-success">Yes</span>
+      <% else %>
+        <span class="text-danger">No</span>
+      <% end %>
+    <% end %>
+
+    <% t.column 'Actions', class: 'col-xs-1' do |x| %>
+      <%= link_to 'View', admin_notice_path(x) %>
+    <% end %>
+  <% end %>
+</div>
+
+<%= paginate @notices %>

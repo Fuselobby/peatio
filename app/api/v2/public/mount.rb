@@ -10,6 +10,9 @@ module API
         mount Public::Markets
         mount Public::MemberLevels
         mount Public::Tools
+        mount Public::Notices
+        mount Public::CryptoInfos
+        mount Public::CryptoReports
       end
     end
   end

@@ -1,0 +1,39 @@
+<%= form_for @notice, url: @notice.new_record? ? admin_notices_url : admin_notice_url(@notice.id) do |f| %>
+  <div class="row row-eq-height">
+    <div class="col-lg-6 col-md-12 mb-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <span>Notice info</span>
+        </div>
+        <dd class="card-body">
+          <dl class="dl-horizontal dl-member">
+            <dt>Title</dt>
+            <% if @notice.new_record? %>
+              <dd><%= f.text_field :notice_title, class: 'form-control' %></dd>
+            <% else %>
+              <dd><%= @notice.notice_title %></dd>
+            <% end %>
+
+            <dt>Description</dt>
+
+            <dd><%= f.text_area  :description, cols: 40, rows: 15, class: 'form-control'  %></dd>
+
+            <dt>From</dt>
+            <dd><%= f.datetime_local_field  :from_date, class: 'form-control' %></dd>
+
+            <dt>To</dt>
+            <dd><%= f.datetime_local_field :to_date, class: "form-control" %></dd>
+
+            <dt>Enabled?</dt>
+            <dd><%= f.check_box :enabled %></dd>
+
+          </dl>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <%= f.submit 'Submit', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

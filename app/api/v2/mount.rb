@@ -42,13 +42,10 @@ module API
                                 api_version: API_VERSION,
                                 doc_version: Peatio::Application::VERSION,
                                 info: {
-                                  title:         "Peatio User API #{API_VERSION}",
-                                  description:   'API for Peatio application.',
-                                  contact_name:  'peatio.tech',
-                                  contact_email: 'hello@peatio.tech',
-                                  contact_url:   'https://www.peatio.tech',
-                                  licence:       'MIT',
-                                  license_url:   'https://github.com/rubykube/peatio/blob/master/LICENSE.md'
+                                  title:         "Speza Exchange API #{API_VERSION}",
+                                  description:   'API for Speza Exchange.',
+                                  contact_email: 'helpdesk@speza.org',
+                                  contact_url:   'https://www.speza.exchange',
                                 },
                                 models: [
                                   API::V2::Entities::Currency,
@@ -59,7 +56,10 @@ module API
                                   API::V2::Entities::OrderBook,
                                   API::V2::Entities::Order,
                                   API::V2::Entities::Trade,
-                                  API::V2::Entities::Withdraw
+                                  API::V2::Entities::Withdraw,
+                                  API::V2::Entities::Notice,
+                                  API::V2::Entities::CryptoInfo,
+                                  API::V2::Entities::CryptoReport
                                 ],
                                 security_definitions: {
                                   Bearer: {
