@@ -67,6 +67,17 @@ ActiveRecord::Schema.define(version: 20190819104335) do
   add_index "blockchains", ["key"], name: "index_blockchains_on_key", unique: true, using: :btree
   add_index "blockchains", ["status"], name: "index_blockchains_on_status", using: :btree
 
+  create_table "crypto_infos", force: :cascade do |t|
+    t.string "crypto",  limit: 255
+    t.text   "context", limit: 65535
+  end
+
+  create_table "crypto_reports", force: :cascade do |t|
+    t.string "crypto",  limit: 255
+    t.text   "context", limit: 65535
+    t.string "lang",    limit: 255
+  end
+
   create_table "currencies", force: :cascade do |t|
     t.string   "name",                  limit: 255
     t.string   "blockchain_key",        limit: 32
@@ -131,6 +142,7 @@ ActiveRecord::Schema.define(version: 20190819104335) do
   add_index "expenses", ["currency_id"], name: "index_expenses_on_currency_id", using: :btree
   add_index "expenses", ["reference_type", "reference_id"], name: "index_expenses_on_reference_type_and_reference_id", using: :btree
 
+<<<<<<< HEAD
   create_table "ext_trades", force: :cascade do |t|
     t.decimal  "price",                     precision: 32, scale: 16
     t.decimal  "volume",                    precision: 32, scale: 16
@@ -145,6 +157,13 @@ ActiveRecord::Schema.define(version: 20190819104335) do
     t.datetime "updated_at",                                          null: false
     t.string   "ask_member_uid", limit: 12
     t.string   "bid_member_uid", limit: 12
+=======
+  create_table "ico_discovery", force: :cascade do |t|
+    t.string  "name",     limit: 255
+    t.string  "longname", limit: 255
+    t.string  "altname",  limit: 255
+    t.boolean "enabled",              default: true, null: false
+>>>>>>> 0b99c84279dac67f4cffebb4b3d0284bef2a7566
   end
 
   create_table "liabilities", force: :cascade do |t|
@@ -199,6 +218,15 @@ ActiveRecord::Schema.define(version: 20190819104335) do
   end
 
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
+
+  create_table "notices", force: :cascade do |t|
+    t.string   "notice_title", limit: 255,                  null: false
+    t.text     "description",  limit: 65535
+    t.boolean  "enabled",                    default: true, null: false
+    t.datetime "from_date",                                 null: false
+    t.datetime "to_date",                                   null: false
+    t.datetime "created_at",                                null: false
+  end
 
   create_table "operations_accounts", force: :cascade do |t|
     t.integer  "code",          limit: 3,   null: false
