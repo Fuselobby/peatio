@@ -19,7 +19,7 @@ end
 #  notice_title :string(255)      not null
 #  description  :text(65535)
 #  enabled      :boolean          default(TRUE), not null
-#  from_date    :datetime         not null
-#  to_date      :datetime         not null
+#  from_date    :datetime
+#  to_date      :datetime
 #  created_at   :datetime         not null
 #
