@@ -30,7 +30,7 @@ module API
             ::Market.enabled.ordered.inject({}) do |h, m|
               h[m.id] = format_ticker Global[m.id].ticker
               # Return top performing pair sorted by volume
-              h.sort_by { |k,v| -v[:ticker][:volume] }[0..limit].to_h
+              h.sort_by { |k,v| -v[:ticker][:volume] }[0..(params[:limit]-1)].to_h
             end
           end
 
