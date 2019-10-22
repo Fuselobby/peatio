@@ -97,6 +97,16 @@ module API
         { at: ticker[:at],
           ticker: formatted_ticker }
       end
+
+      # MRCC Format
+      def mrcc_success(success)
+        status_code = 1001
+        if success
+          status_code = 1
+        end
+
+        status_code
+      end
     end
   end
 end

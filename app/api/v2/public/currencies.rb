@@ -34,6 +34,35 @@ module API
           currencies = currencies.where(type: params[:type]) if params[:type] == 'fiat'
           present currencies.ordered, with: API::V2::Entities::Currency
         end
+
+        # Mainly used by MRCC as requested
+        desc 'Get wallet address of a specific user'
+        params do
+          requires :id, 
+                   type: String,
+                   desc: "Coin to return wallet address"
+          requires :email, 
+                   type: String,
+                   desc: "User email to look for their wallet address"
+        end
+        get 'currencies/:id/wallet' do
+          begin
+            address = Member.find_by(email: params[:email]).get_account(params[:id].downcase).payment_address.address
+
+            data = {}
+            data[:status] = mrcc_success(true)
+            data[:message] = ""
+            data[:result] = {email: params[:email], address: address}
+
+            data
+          rescue Exception => ex
+            data = {}
+            data[:status] = mrcc_success(false)
+            data[:message] = ex.message
+
+            data
+          end
+        end
       end
     end
   end
