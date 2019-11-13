@@ -12,6 +12,7 @@ module API
         def before
           return if request.path == '/api/v2/management/swagger'
           return if request.path == '/api/v2/management/accounts/add_rewards'
+          return if request.path == '/api/v2/management/accounts/payment'
           return if request.path == '/api/v2/management/accounts/campaign_member'
           return if request.path == '/api/v2/management/accounts/campaign_account_balance'
 
