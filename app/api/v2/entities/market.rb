@@ -103,6 +103,19 @@ module API
             desc: "Precision for bid order."
           }
         )
+
+        expose(
+          :market_type,
+          documentation: {
+            type: String,
+            desc: "Market type, whether coin or fiat."
+          }
+        )
+
+        private
+        def market_type
+          ::Currency.find(object.bid_unit).type
+        end
       end
     end
   end
