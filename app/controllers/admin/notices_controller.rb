@@ -58,7 +58,9 @@ module Admin
     def permitted_notice_attributes
       attributes = [
         :notice_title,
+        :notice_url,
         :description,
+        :notice_date,
         :from_date,
         :to_date,
         :enabled
