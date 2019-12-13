@@ -110,5 +110,17 @@ FactoryBot.define do
       explorer_transaction    { 'https://bithomp.com/explorer/#{txid}' }
       status                  { 'active' }
     end
+
+    trait 'xem-testnet' do
+      key                     { 'xem-testnet' }
+      name                    { 'Nem Testnet' }
+      client                  { 'nem' }
+      server                  { 'http://127.0.0.1:7890' }
+      height                  { 1350000 }
+      min_confirmations       { 1 }
+      explorer_address        { 'http://bob.nem.ninja:8765/#/account/#{address}' }
+      explorer_transaction    { 'http://bob.nem.ninja:8765/#/transfer/#{txid}' }
+      status                  { 'active' }
+    end
   end
 end
