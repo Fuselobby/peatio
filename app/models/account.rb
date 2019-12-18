@@ -41,6 +41,8 @@ class Account < ActiveRecord::Base
     return unless currency.coin?
     record = payment_address
 
+    Rails.logger.debug { 'generate address #{payment_address}' }
+
     # The address generation process is in progress.
     if record.address.blank?
       record

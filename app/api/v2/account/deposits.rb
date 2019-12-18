@@ -74,6 +74,9 @@ module API
           end
         end
         get '/deposit_address/:currency' do
+          Rails.logger.warn { 'init deposit_address' }
+          Rails.logger.warn { 'test deposit_address' }
+
           current_user.ac(params[:currency]).payment_address.yield_self do |pa|
             { currency: params[:currency], address: params[:address_format] ? pa.format_address(params[:address_format]) : pa.address }
           end
