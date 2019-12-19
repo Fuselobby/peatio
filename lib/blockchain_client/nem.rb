@@ -16,7 +16,7 @@ module BlockchainClient
     end
 
     def to_address(tx)
-      normalize_address(tx['Destination'])
+      normalize_address(tx['recipient'])
     end
 
     def from_address(tx)
@@ -63,18 +63,11 @@ module BlockchainClient
     end
 
     def fetch_transactions(ledger_index)
-      json_rpc(
-        :ledger,
-        [{
-          "ledger_index": ledger_index || 'validated',
-          "transactions": true,
-          "expand": true
-        }]
-      ).dig('result', 'ledger', 'transactions') || []
+      post_json_rpc('/block/at/public', '{"height" : ' + ledger_index.to_s + '}')
     end
 
     def latest_block_number
-      response = json_rpc('/chain/height').fetch('height')
+      response = get_json_rpc('/chain/height')['height']
     end
 
     def destination_tag_from(address)
@@ -88,7 +81,7 @@ module BlockchainClient
     end
     memoize :connection
 
-    def json_rpc(path)
+    def get_json_rpc(path)
       uri = URI("#{@json_rpc_endpoint.to_s + path}")
       Rails.logger.debug { uri }
       req = Net::HTTP::Get.new(uri)
@@ -97,16 +90,34 @@ module BlockchainClient
       end
 
       if res.body.present?
+        result = JSON.parse(res.body)
+      end
+    end
 
+    def post_json_rpc(path, params = {})
+      uri = URI("#{@json_rpc_endpoint.to_s + path}")
+      Rails.logger.debug { uri }
+      req = Net::HTTP::Post.new(uri)
+      req.add_field("Content-Type", "application/json")
+      body_data = {
+        "j_value": params
+      }    
+      req.body = body_data.to_json
+      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
+
+      if res.body.present?
+        result = JSON.parse(res.body)
       end
     end
 
     def normalize_address(address)
-      super(address.gsub(/\?dt=\d*\Z/, ''))
+      address
     end
 
     def valid_address?(address)
-      /\Ar[0-9a-zA-Z]{33}(:?\?dt=[1-9]\d*)?\z/.match?(address)
+      true
     end
   end
 end

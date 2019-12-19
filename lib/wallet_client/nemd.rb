@@ -14,18 +14,16 @@ module WalletClient
     end
 
     def latest_block_number
-      Rails.cache.fetch :latest_ripple_ledger, expires_in: 5.seconds do
-        response = json_rpc(:ledger, [{ "ledger_index": 'validated' }])
-        response.dig('result', 'ledger_index').to_i
-      end
+      response = get_json_rpc('/chain/height')['height']
     end
 
     def create_address!(options = {})
     Rails.logger.debug { 'init wallet client' }
-      {
-        address: options[:address],
-        secret: options[:secret]
-      }
+    new_address = get_json_rpc('/account/generate')
+    {
+      address: new_address['privateKey'],
+      secret: new_address['address']
+    }
     end
 
     def inspect_address!(address)
@@ -36,22 +34,11 @@ module WalletClient
     end
 
     def valid_address?(address)
-      /\Ar[0-9a-zA-Z]{33}(:?\?dt=[1-9]\d*)?\z/.match?(address)
-    end
-
-    def create_raw_address!(options = {})
-      secret = options.fetch(:secret) { PasswordGenerator.generate(64) }
-      json_rpc(:wallet_propose, { passphrase: secret }).fetch('result')
-                                                       .yield_self do |result|
-        result.slice('key_type', 'master_seed', 'master_seed_hex',
-                      'master_key', 'public_key', 'public_key_hex')
-              .merge(address: normalize_address(result.fetch('account_id')), secret: secret)
-              .symbolize_keys
-      end
+      true
     end
 
     def normalize_address(address)
-      address.gsub(/\?dt=\d*\Z/, '')
+      address
     end
 
     def destination_tag_from(address)
@@ -129,25 +116,50 @@ module WalletClient
     protected
 
     def connection
-      Faraday.new(@json_rpc_endpoint).tap do |connection|
-        unless @json_rpc_endpoint.user.blank?
-          connection.basic_auth(@json_rpc_endpoint.user, @json_rpc_endpoint.password)
-        end
-      end
     end
     memoize :connection
 
-    def json_rpc(method, params = [])
-      body = {}
+    def get_json_rpc(path)
+      uri = URI("#{@json_rpc_endpoint.to_s + path}")
+      Rails.logger.debug { uri }
+      req = Net::HTTP::Get.new(uri)
+      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
 
-      response = connection.get('/').yield_self do |response|
-        response.assert_success!.yield_self do |response|
-          JSON.parse(response.body).tap do |response|
-            response.dig('result', 'error').tap do |error|
-              raise Error, error.inspect if error.present?
-            end
-          end
-        end
+      if res.body.present?
+        result = JSON.parse(res.body)
+      end
+    end
+
+    def get_json_rpc(path)
+      uri = URI("http://34.87.38.59:3000/api/v1/nems?key=#{ + path}")
+      Rails.logger.debug { uri }
+      req = Net::HTTP::Get.new(uri)
+      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
+
+      if res.body.present?
+        result = JSON.parse(res.body)
+      end
+    end
+
+    def post_json_rpc(path, params = {})
+      uri = URI("#{@json_rpc_endpoint.to_s + path}")
+      Rails.logger.debug { uri }
+      req = Net::HTTP::Post.new(uri)
+      req.add_field("Content-Type", "application/json")
+      body_data = {
+        "j_value": params
+      }    
+      req.body = body_data.to_json
+      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
+
+      if res.body.present?
+        result = JSON.parse(res.body)
       end
     end
   end

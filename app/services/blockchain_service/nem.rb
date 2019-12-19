@@ -21,7 +21,7 @@ module BlockchainService
       (current_ledger..latest_ledger).each do |ledger_index|
         Rails.logger.info { "Started processing #{blockchain.key} ledger #{ledger_index}." }
 
-        transactions = client.fetch_transactions(ledger_index)
+        transactions = client.fetch_transactions(ledger_index)['transactions']
         next if transactions.blank?
 
         block_data = { id: ledger_index }
@@ -40,10 +40,10 @@ module BlockchainService
     private
 
     def build_deposits(transactions, ledger_index)
+      Rails.logger.info { "init build deposit." }
       transactions.each_with_object([]) do |tx, deposits|
         next unless valid_transaction?(tx)
-
-        destination_tag = tx['DestinationTag'] || client.destination_tag_from(tx['Destination'])
+        
         address = "#{client.to_address(tx)}?dt=#{destination_tag}"
 
         payment_addresses_where(address: address) do |payment_address|
@@ -71,6 +71,7 @@ module BlockchainService
     end
 
     def build_withdrawals(transactions, ledger_index)
+      Rails.logger.info { "init build withdrawal." }
       transactions.each_with_object([]) do |tx, withdrawals|
         next unless valid_transaction?(tx)
 
@@ -93,10 +94,9 @@ module BlockchainService
     end
 
     def valid_transaction?(tx)
-      client.inspect_address!(tx['Account'])[:is_valid] &&
-        tx['TransactionType'].to_s == 'Payment' &&
-        tx.dig('metaData', 'TransactionResult').to_s == 'tesSUCCESS' &&
-        String === tx['Amount']
+      client.inspect_address!(tx['recipient'])[:is_valid] &&
+        tx['type'].to_i == 257 &&
+        String === tx['amount']
     end
   end
 end
