@@ -21,8 +21,8 @@ module WalletClient
     Rails.logger.debug { 'init wallet client' }
     new_address = get_json_rpc('/account/generate')
     {
-      address: new_address['privateKey'],
-      secret: new_address['address']
+      address: new_address['address'],
+      secret: new_address['privateKey']
     }
     end
 

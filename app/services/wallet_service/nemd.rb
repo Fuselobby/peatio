@@ -4,7 +4,6 @@
 module WalletService
   class Nemd < Base
     def create_address(options = {})
-      Rails.logger.debug { 'init WalletService' }
       client.create_address!(options)
     end
 
