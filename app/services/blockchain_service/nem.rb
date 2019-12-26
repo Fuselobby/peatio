@@ -75,28 +75,27 @@ module BlockchainService
       transactions.each_with_object([]) do |tx, withdrawals|
         next unless valid_transaction?(tx)
 
-        Withdraws::Coin
-          .where(currency: currencies)
-          .where(txid: client.normalize_txid(tx.fetch('hash')))
-          .each do |withdraw|
-            withdraw_txs = client.build_transaction(tx: tx,
-                                                    currency: withdraw.currency)
-            withdraw_txs.fetch(:entries).each do |entry|
-              withdrawals << {
-                txid:           withdraw_txs[:id],
-                rid:            client.to_address(tx),
-                amount:         entry[:amount],
-                block_number:   ledger_index
-              }
-          end
-        end
+        #Withdraws::Coin
+        #  .where(currency: currencies)
+        #  .where(txid: client.normalize_txid(tx.fetch('hash')))
+        #  .each do |withdraw|
+        #    withdraw_txs = client.build_transaction(tx: tx,
+        #                                            currency: withdraw.currency)
+        #    withdraw_txs.fetch(:entries).each do |entry|
+        #      withdrawals << {
+        #        txid:           withdraw_txs[:id],
+        #        rid:            client.to_address(tx),
+        #        amount:         entry[:amount],
+        #        block_number:   ledger_index
+        #      }
+        #  end
+        #end
       end
     end
 
     def valid_transaction?(tx)
       client.inspect_address!(tx['recipient'])[:is_valid] &&
-        tx['type'].to_i == 257 &&
-        String === tx['amount']
+        tx['type'].to_i == 257
     end
   end
 end

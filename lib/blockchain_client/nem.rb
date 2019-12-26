@@ -36,16 +36,18 @@ module BlockchainClient
   end
 
     def build_transaction(tx:, currency:)
-      {
-        id: normalize_txid(tx.fetch('hash')),
-        entries:       build_entries(tx, currency)
-      }
+      newdata = get_json_rpc('/account/transfers/incoming?address=' + tx['recipient'])
+      newdata['data'].each do |newx|
+        if(tx['timeStamp'] == newx['transaction']['timeStamp'])
+          return {id: newx['meta']['hash']['data'] ,entries: build_entries(tx, currency)}
+        end
+      end
     end
 
     def build_entries(tx, currency)
       [
         {
-          amount:  convert_from_base_unit(tx.fetch('Amount'), currency)
+          amount:  convert_from_base_unit(tx['amount'], currency)
         }
       ]
     end
@@ -73,6 +75,10 @@ module BlockchainClient
     def destination_tag_from(address)
       address =~ /\?dt=(\d*)\Z/
       $1.to_i
+    end
+
+    def convert_from_base_unit(value, currency)
+      value.to_d / currency.base_factor
     end
 
     protected
