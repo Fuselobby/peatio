@@ -60,14 +60,14 @@ module WalletClient
     def sign_transaction(issuer, recipient, amount)
       account_address = normalize_address(issuer.fetch(:address))
       destination_address = normalize_address(recipient.fetch(:address))
-      fee = calculate_current_fee(amount, issuer.fetch(:currency))
-      amount_without_fee = convert_to_base_unit!(amount) - fee.to_i
+      fee = calculate_current_fee(amount)
+      amount_without_fee = convert_to_base_unit!(amount, issuer.fetch(:currency)) - fee.to_i
 
       {
         "transaction":
         {
             "timeStamp": Time.now.getutc.to_i,
-            "amount": convert_to_base_unit!(amount_without_fee),
+            "amount": convert_to_base_unit!(amount_without_fee, issuer.fetch(:currency)),
             "fee": fee,
             "recipient": destination_address,
             "type": 257,
@@ -98,12 +98,11 @@ module WalletClient
     end
 
     def load_balance!(address, currency)
-      #json_rpc(:account_info, [account: normalize_address(address), ledger_index: 'validated', strict: true])
-      #  .fetch('result')
-      #  .fetch('account_data')
-      #  .fetch('Balance')
-      #  .to_d
-      #  .yield_self { |amount| convert_from_base_unit(amount) }
+      get_json_rpc("/account/get?address=#{address}")
+        .fetch('account')
+        .fetch('balance')
+        .to_d
+        .yield_self { |amount| convert_from_base_unit(amount, currency) }
     rescue => e
       report_exception_to_screen(e)
       0.0

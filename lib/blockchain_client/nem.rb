@@ -24,16 +24,15 @@ module BlockchainClient
     end
 
     def load_balance!(address, currency)
-    json_rpc('/status')
-      .fetch('result')
-      .fetch('account_data')
-      .fetch('Balance')
-      .to_d
-      .yield_self { |amount| convert_from_base_unit(amount, currency) }
-  rescue => e
-    report_exception_to_screen(e)
-    0.0
-  end
+      get_json_rpc("/account/get?address=#{address}")
+        .fetch('account')
+        .fetch('balance')
+        .to_d
+        .yield_self { |amount| convert_from_base_unit(amount, currency) }
+    rescue => e
+      report_exception_to_screen(e)
+      0.0
+    end
 
     def build_transaction(tx:, currency:)
       newdata = get_json_rpc('/account/transfers/incoming?address=' + tx['recipient'])
