@@ -44,8 +44,7 @@ module WalletClient
 
     def create_withdrawal!(issuer, recipient, amount, _options = {})
       tx_blob = sign_transaction(issuer, recipient, amount)
-
-      res = post_json_rpc('/transaction/prepare-announce', tx_blob.to_s)
+      res = post_json_rpc('/transaction/prepare-announce', tx_blob)
 
       # TODO: It returns provision results. Transaction may fail or success
       # than change status to opposite one before ledger is final.
@@ -146,6 +145,7 @@ module WalletClient
         "j_value": params
       }    
       req.body = body_data.to_json
+
       res = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end

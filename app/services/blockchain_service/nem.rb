@@ -44,7 +44,7 @@ module BlockchainService
       transactions.each_with_object([]) do |tx, deposits|
         next unless valid_transaction?(tx)
         
-        address = "#{client.to_address(tx)}?dt=#{destination_tag}"
+        address = "#{client.to_address(tx)}"
 
         payment_addresses_where(address: address) do |payment_address|
           deposit_txs = client.build_transaction(tx: tx, currency: payment_address.currency)

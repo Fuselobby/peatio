@@ -22,7 +22,7 @@ module WalletService
 
     def build_withdrawal!(withdraw, options = {})
       client.create_withdrawal!(
-        { address: wallet.address, secret: wallet.secret },
+        { address: wallet.address, secret: wallet.secret, publickey: wallet.settings['publickey'], currency: wallet.currency },
         { address: withdraw.rid },
         withdraw.amount,
         options
