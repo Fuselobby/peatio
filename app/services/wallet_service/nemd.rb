@@ -12,7 +12,7 @@ module WalletService
       spread_hash = spread_deposit(deposit)
       spread_hash.map do |address, amount|
         client.create_withdrawal!(
-          { address: pa.address, secret: pa.secret, publickey: pa.details['publickey'], currency: pa.currency },
+          { address: pa.address, secret: pa.secret, publickey: pa.details['publickey'], currency: deposit.currency },
           { address: address },
           amount,
           options

@@ -50,8 +50,8 @@ module WalletClient
       # TODO: It returns provision results. Transaction may fail or success
       # than change status to opposite one before ledger is final.
       # Need to set special status and recheck this transaction status
-      if result['message'].to_s == 'SUCCESS'
-        normalize_txid(result.fetch('transactionHash').fetch('data'))
+      if res.fetch('message').to_s == 'SUCCESS'
+        normalize_txid(res.fetch('transactionHash').fetch('data'))
       else
         raise Error, "NEM withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed. Message: #{error_message}."
       end
@@ -61,33 +61,35 @@ module WalletClient
       account_address = normalize_address(issuer.fetch(:address))
       destination_address = normalize_address(recipient.fetch(:address))
       fee = calculate_current_fee(amount)
-      amount_without_fee = convert_to_base_unit!(amount, issuer.fetch(:currency)) - fee.to_i
+      amount_converted = convert_to_base_unit(amount, issuer.fetch(:currency))
+      amount_without_fee = amount_converted.to_i - fee.to_i
+      node_time = get_json_rpc("/time-sync/network-time").fetch('sendTimeStamp') / 1000
 
-      {
-        "transaction":
+      "{
+        'transaction':
         {
-            "timeStamp": Time.now.getutc.to_i,
-            "amount": convert_to_base_unit!(amount_without_fee, issuer.fetch(:currency)),
-            "fee": fee,
-            "recipient": destination_address,
-            "type": 257,
-            "deadline": Time.now.getutc.to_i + 6000,
-            "message":
+            'timeStamp': #{node_time},
+            'amount': #{amount_without_fee},
+            'fee': #{fee.to_i},
+            'recipient': #{destination_address},
+            'type': 257,
+            'deadline': #{node_time + 1000},
+            'message':
             {
-                "payload": "",
-                "type": 1
+                'payload': '',
+                'type': 1
             },
-            "version": 1744830466,
-            "signer": issuer.fetch(:publickey)
+            'version': 1744830465,
+            'signer': #{issuer.fetch(:publickey)}
         },
-        "privateKey": issuer.fetch(:secret)
-      }
+        'privateKey': #{issuer.fetch(:secret)}
+      }"
     end
 
-    FEE_FACTOR = 0.05
     # Returns fee in drops that is enough to process transaction in current ledger
     def calculate_current_fee(amount)
-      tmp = FEE_FACTOR * minimum_fee(amount / 1_000_000)
+      fee_factor = 0.05
+      tmp = fee_factor * minimum_fee(amount / 1_000_000)
       #tmp += message_fee if @transaction.has_message?
       tmp * 1_000_000
     end
@@ -113,7 +115,7 @@ module WalletClient
     end
 
     def convert_to_base_unit(value, currency)
-      value.to_d * currency.base_factor
+      value.to_d * 1_000_000
     end
 
     protected
