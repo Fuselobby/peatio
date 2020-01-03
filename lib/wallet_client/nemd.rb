@@ -60,8 +60,7 @@ module WalletClient
       account_address = normalize_address(issuer.fetch(:address))
       destination_address = normalize_address(recipient.fetch(:address))
       fee = calculate_current_fee(amount)
-      amount_converted = convert_to_base_unit(amount, issuer.fetch(:currency))
-      amount_without_fee = amount_converted.to_i - fee.to_i
+      amount_without_fee = convert_to_base_unit!(amount) - fee.to_i
       node_time = get_json_rpc("/time-sync/network-time").fetch('sendTimeStamp') / 1000
 
       "{
@@ -111,10 +110,6 @@ module WalletClient
 
     def convert_from_base_unit(value, currency)
       value.to_d / currency.base_factor
-    end
-
-    def convert_to_base_unit(value, currency)
-      value.to_d * 1_000_000
     end
 
     protected
