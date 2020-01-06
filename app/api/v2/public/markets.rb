@@ -16,6 +16,24 @@ module API
             present ::Market.enabled.ordered, with: API::V2::Entities::Market
           end
 
+          desc 'Get top performing markets.',
+            is_array: true,
+            success: API::V2::Entities::Market
+          params do
+            optional :limit,
+                     type: { value: Integer, message: 'public.top_markets.non_integer_limit' },
+                     values: { value: 1..1000, message: 'public.top_markets.invalid_limit' },
+                     default: 1000,
+                     desc: 'Limit the number of returned top performing prices. Default to 1000.'
+          end
+          get "/top" do
+            ::Market.enabled.ordered.inject({}) do |h, m|
+              h[m.id] = format_ticker Global[m.id].ticker
+              # Return top performing pair sorted by volume
+              h.sort_by { |k,v| -v[:ticker][:volume] }[0..(params[:limit]-1)].to_h
+            end
+          end
+
           desc 'Get the order book of specified market.',
             is_array: true,
             success: API::V2::Entities::OrderBook
@@ -71,7 +89,7 @@ module API
                      desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
           end
           get ":market/trades" do
-            ExtTrade.order(order_param)
+            Trade.order(order_param)
                  .tap { |q| q.where!(market: params[:market]) if params[:market] }
                  .tap { |q| present paginate(q), with: API::V2::Entities::Trade }
           end
@@ -124,6 +142,38 @@ module API
             KLineService
               .new(params[:market], params[:period])
               .get_ohlc(params.slice(:limit, :time_from, :time_to))
+          end
+
+          desc 'Get OHLC(k line) of all markets.'
+          params do
+            optional :period,
+                     type: { value: Integer, message: 'public.k_line.non_integer_period' },
+                     values: { value: KLineService::AVAILABLE_POINT_PERIODS, message: 'public.k_line.invalid_period' },
+                     default: 1,
+                     desc: "Time period of K line, default to 1. You can choose between #{KLineService::AVAILABLE_POINT_PERIODS.join(', ')}"
+            optional :time_from,
+                     type: { value: Integer, message: 'public.k_line.non_integer_time_from' },
+                     allow_blank: { value: false, message: 'public.k_line.empty_time_from' },
+                     desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data after that time will be returned."
+            optional :time_to,
+                     type: { value: Integer, message: 'public.k_line.non_integer_time_to' },
+                     allow_blank: { value: false, message: 'public.k_line.empty_time_to' },
+                     desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data till that time will be returned."
+            optional :limit,
+                     type: { value: Integer, message: 'public.k_line.non_integer_limit' },
+                     values: { value: KLineService::AVAILABLE_POINT_LIMITS, message: 'public.k_line.invalid_limit' },
+                     default: 30,
+                     desc: "Limit the number of returned data points default to 30. Ignored if time_from and time_to are given."
+          end
+          get "/k-line" do
+            kline = {}
+            ::Market.all.enabled.ids.each do |market|
+              kline[market] = KLineService
+                              .new(market, params[:period])
+                              .get_ohlc(params.slice(:limit, :time_from, :time_to))
+            end
+
+            kline
           end
 
           desc 'Get ticker of all markets.'

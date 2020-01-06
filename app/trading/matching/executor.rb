@@ -82,7 +82,7 @@ module Matching
         strike(@trade, @bid, accounts_table["#{@bid.bid}:#{@bid.member_id}"], accounts_table["#{@bid.ask}:#{@bid.member_id}"])
 
         # Check if trade is bot_trader
-        bot_trade = (@trade.ask_member_id == @trade.bid_member_id) and Member.find(@trade.ask_member_id).email.include? "trade.com"
+        bot_trade = (@trade.ask_member_id == @trade.bid_member_id) and (Member.find(@trade.ask_member_id).email.include? "trade.com")
 
         # Save all trades (including bots) to this table
         @all_trades = ExtTrade.new \
@@ -122,7 +122,7 @@ module Matching
           end
         end
 
-        @trade.save unless bot_trade
+        @trade.save #unless bot_trade
 
         @all_trades.save
       end

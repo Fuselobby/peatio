@@ -88,4 +88,15 @@
     address:         https://bithomp.com/explorer/#{address}
     transaction:     https://bithomp.com/explorer/#{txid}
   status:            active
+
+- key:               xem-testnet
+  name:              Nem Testnet
+  client:            nem                                 # API client name.
+  server:            http://127.0.0.1:7890               # Public Nem node endpoint.
+  height:            2451626                             # Initial block number from which sync will be started.
+  min_confirmations: 6                                   # Minimal confirmations needed for withdraw and deposit confirmation.
+  explorer:
+    address:         http://bob.nem.ninja:8765/#/account/#{address}
+    transaction:     http://bob.nem.ninja:8765/#/transfer/#{txid}
+  status:            active
 <% end %>

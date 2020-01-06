@@ -27,9 +27,9 @@ class ApplicationController < ActionController::Base
     end
     
     # Bypass for local development
-    if !Rails.env.production?
-      Member.first
-    end
+    # if !Rails.env.production?
+    #   Member.first
+    # end
   end
   memoize :current_user
 
