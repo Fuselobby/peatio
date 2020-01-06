@@ -8,6 +8,7 @@ module WalletClient
       super
       @json_rpc_call_id  = 0
       @json_rpc_endpoint = URI.parse(wallet.uri)
+      Rails.logger.debug { 'json #{@json_rpc_endpoint}' }
     end
 
     def create_address!(options = {})

@@ -165,4 +165,23 @@
     #
     # ERC20 configuration.
     erc20_contract_address: '0x0000000000000000000000000000000000000000' # Always wrap this value in quotes!
+
+- id:                     xem
+  name:                   Nem
+  blockchain_key:         xem-testnet
+  symbol:                 'ꭆ'
+  type:                   coin
+  precision:              6
+  base_factor:            1_000_000
+  enabled:                true
+  # Deposits with less amount are skipped during blockchain synchronization.
+  # We advise to set value 10 times bigger than the network fee to prevent losses.
+  min_deposit_amount:     4
+  min_collection_amount:  4
+  withdraw_limit_24h:     400
+  withdraw_limit_72h:     800
+  deposit_fee:            0
+  withdraw_fee:           8
+  position:               9
+  options:                {}
 <% end %>
