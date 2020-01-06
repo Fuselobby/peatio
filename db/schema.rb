@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190911130000) do
+ActiveRecord::Schema.define(version: 20191122095326) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -256,6 +256,8 @@ ActiveRecord::Schema.define(version: 20190911130000) do
     t.datetime "from_date"
     t.datetime "to_date"
     t.datetime "created_at",                                null: false
+    t.datetime "notice_date"
+    t.string   "notice_url",   limit: 255
   end
 
   create_table "operations_accounts", force: :cascade do |t|

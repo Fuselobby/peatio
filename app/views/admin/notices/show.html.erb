@@ -14,14 +14,20 @@
               <dd><%= @notice.notice_title %></dd>
             <% end %>
 
-            <dt>Description</dt>
+            <dt>Description (optional)</dt>
 
             <dd><%= f.text_area  :description, cols: 40, rows: 15, class: 'form-control'  %></dd>
 
-            <dt>From</dt>
+            <dt>Announcement Link (optional)</dt>
+            <dd><%= f.text_area  :notice_url, cols: 20, rows: 1, class: 'form-control'  %></dd>
+
+            <dt>Date (optional)</dt>
+            <dd><%= f.datetime_local_field  :notice_date, class: 'form-control' %></dd>
+
+            <dt>Announcement Start Date</dt>
             <dd><%= f.datetime_local_field  :from_date, class: 'form-control' %></dd>
 
-            <dt>To</dt>
+            <dt>Announcement End Date</dt>
             <dd><%= f.datetime_local_field :to_date, class: "form-control" %></dd>
 
             <dt>Enabled?</dt>

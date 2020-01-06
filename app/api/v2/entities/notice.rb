@@ -22,10 +22,26 @@ module API
         )
 
         expose(
+            :notice_url,
+            documentation: {
+                type: String,
+                desc: 'Notice URL Link.'
+            }
+        )
+
+        expose(
             :description,
             documentation: {
                 type: String,
                 desc: 'description.'
+            }
+        )
+
+        expose(
+            :notice_date,
+            documentation: {
+                type: String,
+                desc: 'Notice Date.'
             }
         )
 
