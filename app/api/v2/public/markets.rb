@@ -27,6 +27,32 @@ module API
                      desc: 'Limit the number of returned top performing prices. Default to 1000.'
           end
           get "/top" do
+            # matchers for the purpose of substituting symbols in price_change_percent in order to sort as decimals
+            matchers = {
+              "-" => "",
+              "+" => "",
+              "%" => "",
+              "." => "."
+            }
+
+            ::Market.enabled.ordered.inject({}) do |h, m|
+              h[m.id] = format_ticker Global[m.id].ticker
+              # Return top performing pair sorted by volume
+              h.sort_by { |k,v| -v[:ticker][:price_change_percent].dup.gsub!(/\W/, matchers).to_d }[0..(params[:limit]-1)].to_h
+            end
+          end
+
+          desc 'Get top volume markets.',
+            is_array: true,
+            success: API::V2::Entities::Market
+          params do
+            optional :limit,
+                     type: { value: Integer, message: 'public.top_markets.non_integer_limit' },
+                     values: { value: 1..1000, message: 'public.top_markets.invalid_limit' },
+                     default: 1000,
+                     desc: 'Limit the number of returned top performing prices. Default to 1000.'
+          end
+          get "/top/volume" do
             ::Market.enabled.ordered.inject({}) do |h, m|
               h[m.id] = format_ticker Global[m.id].ticker
               # Return top performing pair sorted by volume
