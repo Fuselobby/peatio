@@ -26,7 +26,7 @@ module API
                      default: 1000,
                      desc: 'Limit the number of returned top performing prices. Default to 1000.'
           end
-          get "/top" do
+          get "/recommended" do
             # matchers for the purpose of substituting symbols in price_change_percent in order to sort as decimals
             matchers = {
               "-" => "",
@@ -38,11 +38,20 @@ module API
             ::Market.enabled.ordered.inject({}) do |h, m|
               h[m.id] = format_ticker Global[m.id].ticker
               # Return top performing pair sorted by volume
-              h.sort_by { |k,v| -v[:ticker][:price_change_percent].dup.gsub!(/\W/, matchers).to_d }[0..(params[:limit]-1)].to_h
+              @markets = h.sort_by { |k,v| -v[:ticker][:price_change_percent].dup.gsub!(/\W/, matchers).to_d }[0..(params[:limit]-1)].to_h
+            end
+
+            @markets.each do |k, v|
+              currency = ::Market.enabled.find(k).ask_unit
+              temp_hash = Hash.new
+              temp_hash["ask_unit"] = currency
+              temp_hash["bid_unit"] = ::Market.enabled.find(k).bid_unit
+              temp_hash["icon_url"] = ::Currency.enabled.find(currency).icon_url
+              @markets[k][:ticker] = v[:ticker].merge(temp_hash)
             end
           end
 
-          desc 'Get top volume markets.',
+          desc 'Get top digital asset markets.',
             is_array: true,
             success: API::V2::Entities::Market
           params do
@@ -52,12 +61,28 @@ module API
                      default: 1000,
                      desc: 'Limit the number of returned top performing prices. Default to 1000.'
           end
-          get "/top/volume" do
-            ::Market.enabled.ordered.inject({}) do |h, m|
-              h[m.id] = format_ticker Global[m.id].ticker
-              # Return top performing pair sorted by volume
-              h.sort_by { |k,v| -v[:ticker][:volume] }[0..(params[:limit]-1)].to_h
+          get "/top" do
+            # Top 4 Digital Assets
+            btc = format_ticker Global['btcusdt'].ticker
+            eth = format_ticker Global['ethusdt'].ticker
+            xrp = format_ticker Global['xrpusdt'].ticker
+            ltc = format_ticker Global['ltcusdt'].ticker
+            link = format_ticker Global['linkusdt'].ticker
+            zrx = format_ticker Global['zrxusdt'].ticker
+
+            @markets = {"btc": btc}.merge({"eth": eth}).merge({"xrp": xrp}).merge({"ltc": ltc}).merge({"link": link}).merge({"zrx": zrx})
+
+            @markets.each do |k, v|
+              temp_hash = Hash.new
+              temp_hash["icon_url"] = ::Currency.enabled.find(k).icon_url
+              @markets[k][:ticker] = v[:ticker].merge(temp_hash)
             end
+
+            # all_markets = ::Market.enabled.ordered.inject({}) do |h, m|
+            #   h[m.id] = format_ticker Global[m.id].ticker
+            #   # Return top performing pair sorted by volume
+            #   h.sort_by { |k,v| -v[:ticker][:volume] }.to_h
+            # end
           end
 
           desc 'Get the order book of specified market.',
