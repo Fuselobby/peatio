@@ -35,7 +35,8 @@ module API
               "." => "."
             }
 
-            ::Market.enabled.ordered.inject({}) do |h, m|
+            # Filter markets to only idr markets for SPEZA Indonesia only
+            ::Market.enabled.where(bid_unit = 'idr').ordered.inject({}) do |h, m|
               h[m.id] = format_ticker Global[m.id].ticker
               # Return top performing pair sorted by volume
               @markets = h.sort_by { |k,v| -v[:ticker][:price_change_percent].dup.gsub!(/\W/, matchers).to_d }[0..(params[:limit]-1)].to_h
