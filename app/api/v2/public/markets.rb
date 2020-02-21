@@ -27,7 +27,6 @@ module API
                      desc: 'Limit the number of returned top performing prices. Default to 1000.'
             optional :bid_market,
                      type: String,
-                     values: { value: ::Market.enabled.pluck(:bid_unit).uniq, message: 'public.trade.invalid_bid_market' },
                      desc: "If set, return markets which belongs to a particular bid_unit only'."
           end
           get "/recommended" do
