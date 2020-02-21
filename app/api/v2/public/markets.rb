@@ -25,6 +25,11 @@ module API
                      values: { value: 1..1000, message: 'public.top_markets.invalid_limit' },
                      default: 1000,
                      desc: 'Limit the number of returned top performing prices. Default to 1000.'
+            optional :bid_market,
+                     type: String,
+                     values: { value: ::Market.enabled.pluck(:bid_unit).uniq, message: 'public.trade.invalid_bid_market' },
+                     default: 'desc',
+                     desc: "If set, return markets which belongs to a particular bid_unit only'."
           end
           get "/recommended" do
             # matchers for the purpose of substituting symbols in price_change_percent in order to sort as decimals
@@ -35,8 +40,14 @@ module API
               "." => "."
             }
 
-            # Filter markets to only idr markets for SPEZA Indonesia only
-            ::Market.enabled.where(bid_unit: 'idr').ordered.inject({}) do |h, m|
+            # Filter market based on bid_market if it is present
+            if params[:bid_market].present?
+              bid_unit = params[:bid_market]
+            else
+              bid_unit = ::Market.enabled.pluck(:bid_unit).uniq
+            end
+
+            ::Market.enabled.where(bid_unit: bid_unit).ordered.inject({}) do |h, m|
               h[m.id] = format_ticker Global[m.id].ticker
               # Return top performing pair sorted by volume
               @markets = h.sort_by { |k,v| -v[:ticker][:price_change_percent].dup.gsub!(/\W/, matchers).to_d }[0..(params[:limit]-1)].to_h

@@ -78,6 +78,7 @@
 | `market.trade.empty_timestamp`               | Parameter **timestamp** is empty                                |
 | `market.trade.invalid_order_by`              | Parameter **order_by** is not valid                             |
 | `market.trade.not_permitted`                 | Pass the corresponding verification steps to **enable trading** |
+| `market.trade.invalid_bid_market`                 | Parameter **bid_market** is invalid                             |
 
 ## Public module
 
