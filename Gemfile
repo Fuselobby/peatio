@@ -55,6 +55,9 @@ gem 'peatio', '~> 0.4.5'
 gem 'rack-cors', '~> 1.0.2', require: false
 gem 'env-tweaks', '~> 1.0.0'
 gem 'vault', '~> 0.12', require: false
+gem 'em-synchrony'
+gem 'em-http-request'
+gem 'binance'
 
 group :development, :test do
   gem 'bump',         '~> 0.7'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191122095326) do
+ActiveRecord::Schema.define(version: 20200219033915) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -49,6 +49,52 @@ ActiveRecord::Schema.define(version: 20191122095326) do
 
   add_index "assets", ["currency_id"], name: "index_assets_on_currency_id", using: :btree
   add_index "assets", ["reference_type", "reference_id"], name: "index_assets_on_reference_type_and_reference_id", using: :btree
+
+  create_table "binance_account_informations", force: :cascade do |t|
+    t.string   "asset",      limit: 255,                                         null: false
+    t.decimal  "free",                   precision: 32, scale: 16, default: 0.0, null: false
+    t.string   "user_api",   limit: 255,                                         null: false
+    t.datetime "created_at",                                                     null: false
+    t.datetime "updated_at",                                                     null: false
+  end
+
+  create_table "binance_price_tickers", force: :cascade do |t|
+    t.string   "symbol",     limit: 255,                                         null: false
+    t.decimal  "price",                  precision: 32, scale: 16, default: 0.0, null: false
+    t.datetime "created_at",                                                     null: false
+    t.datetime "updated_at",                                                     null: false
+  end
+
+  create_table "binance_tradings", force: :cascade do |t|
+    t.string   "market",        limit: 10,                                               null: false
+    t.integer  "trade_id",      limit: 4,                                                null: false
+    t.string   "user_uid",      limit: 12,                                               null: false
+    t.integer  "order_id",      limit: 4
+    t.string   "tx_id",         limit: 12,                                               null: false
+    t.datetime "tx_datetime",                                                            null: false
+    t.decimal  "ori_price",                precision: 32, scale: 16, default: 0.0,       null: false
+    t.decimal  "price",                    precision: 32, scale: 16, default: 0.0,       null: false
+    t.decimal  "ori_volume",               precision: 32, scale: 16, default: 0.0,       null: false
+    t.decimal  "ori_qty",                  precision: 32, scale: 16, default: 0.0,       null: false
+    t.decimal  "exe_qty",                  precision: 32, scale: 16, default: 0.0,       null: false
+    t.decimal  "cum_qty",                  precision: 32, scale: 16, default: 0.0,       null: false
+    t.string   "status",        limit: 30,                           default: "matched", null: false
+    t.string   "time_in_force", limit: 10
+    t.string   "trading_type",  limit: 30,                           default: "market"
+    t.string   "side",          limit: 30
+    t.datetime "created_at",                                                             null: false
+    t.datetime "updated_at",                                                             null: false
+  end
+
+  create_table "binance_withdrawals", force: :cascade do |t|
+    t.string   "msg",                 limit: 255
+    t.string   "success",             limit: 255,             null: false
+    t.string   "tx_id",               limit: 255
+    t.string   "binance_withdraw_id", limit: 255,             null: false
+    t.integer  "released",            limit: 1,   default: 0, null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+  end
 
   create_table "blockchains", force: :cascade do |t|
     t.string   "key",                  limit: 255,             null: false
@@ -171,13 +217,6 @@ ActiveRecord::Schema.define(version: 20191122095326) do
     t.boolean "enabled",              default: true, null: false
   end
 
-  create_table "klines", force: :cascade do |t|
-    t.integer  "period",     limit: 4
-    t.text     "data",       limit: 16777215
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-  end
-
   create_table "liabilities", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
@@ -193,24 +232,6 @@ ActiveRecord::Schema.define(version: 20191122095326) do
   add_index "liabilities", ["currency_id"], name: "index_liabilities_on_currency_id", using: :btree
   add_index "liabilities", ["member_id"], name: "index_liabilities_on_member_id", using: :btree
   add_index "liabilities", ["reference_type", "reference_id"], name: "index_liabilities_on_reference_type_and_reference_id", using: :btree
-
-  create_table "liquidity_trades", force: :cascade do |t|
-    t.decimal  "price",                      precision: 32, scale: 16
-    t.decimal  "volume",                     precision: 32, scale: 16
-    t.integer  "ask_id",         limit: 4
-    t.integer  "bid_id",         limit: 4
-    t.integer  "trend",          limit: 4
-    t.string   "market_id",      limit: 20
-    t.integer  "ask_member_id",  limit: 4
-    t.integer  "bid_member_id",  limit: 4
-    t.decimal  "funds",                      precision: 32, scale: 16
-    t.datetime "created_at",                                                               null: false
-    t.datetime "updated_at",                                                               null: false
-    t.string   "ask_member_uid", limit: 12
-    t.string   "bid_member_uid", limit: 12
-    t.string   "status",         limit: 255,                           default: "pending", null: false
-    t.string   "response",       limit: 255
-  end
 
   create_table "markets", force: :cascade do |t|
     t.string   "ask_unit",       limit: 10,                                          null: false

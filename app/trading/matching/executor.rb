@@ -81,9 +81,9 @@ module Matching
         strike(@trade, @ask, accounts_table["#{@ask.ask}:#{@ask.member_id}"], accounts_table["#{@ask.bid}:#{@ask.member_id}"])
         strike(@trade, @bid, accounts_table["#{@bid.bid}:#{@bid.member_id}"], accounts_table["#{@bid.ask}:#{@bid.member_id}"])
 
-        # Check if trade is bot_trader
-        bot_trade = (@trade.ask_member_id == @trade.bid_member_id) and (Member.find(@trade.ask_member_id).email.include? "trade.com")
-
+        # Check if trade is performed by 2 bot_trader(s)
+        bot_trade = (@trade.ask_member_id == @trade.bid_member_id) and (Member.find(@trade.ask_member_id).email.include? "trade.com")     
+        
         # Save all trades (including bots) to this table
         @all_trades = ExtTrade.new \
             ask:           @ask,
@@ -122,9 +122,36 @@ module Matching
           end
         end
 
-        @trade.save #unless bot_trade
+        @trade.save! #unless bot_trade
 
         @all_trades.save
+
+        # Check if trade is performed by 1 Bot and price is exists perform, 1 User
+        is_bot = 0
+        is_bot += 1 if (Member.find(@trade.ask_member_id).email.include? "trade.com")        
+        is_bot += 2 if (Member.find(@trade.bid_member_id).email.include? "trade.com")
+
+        if is_bot > 0 && is_bot <= 2
+          market_price = ::BinancePriceTicker.get_market_price(@trade.market_id)
+          return unless (market_price.price.to_f * 1.05) <= @price && market_price.present?
+
+          binance_trading = BinanceTrading.find_by(trade_id: @trade.id)
+          
+          if is_bot == 1 
+            trade_type = {user_uid: @trade.ask_member_id, side: "SELL"}                  
+          else
+            trade_type = {user_uid: @trade.bid_member_id, side: "BUY"}
+          end
+
+          binance_trading = BinanceTrading.new(market: @trade.market_id, trade_id: @trade.id, user_uid: trade_type[:user_uid]) if binance_trading.blank?
+          binance_trading.side = trade_type[:side]
+          binance_trading.ori_volume = @trade.volume   
+          binance_trading.tx_datetime = DateTime.now      
+
+          binance_trading.save
+        
+          AMQPQueue.enqueue(:binance_w_trading, {tx_id: binance_trading.tx_id}, { persistent: true })
+        end   
       end
     end
 

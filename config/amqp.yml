@@ -45,6 +45,9 @@ queue:
     durable: true
   trade_error:
     name: peatio.trades.errors
+  binance_w_trading:
+    name: peatio.binance.w.trading
+    durable: true
 
 binding:
   matching:
@@ -75,6 +78,8 @@ binding:
     queue: deposit_coin_address
   trade_error:
     queue: trade_error
+  binance_w_trading:
+    queue: binance_w_trading
 
 channel:
   trade_executor:

@@ -151,6 +151,23 @@ while($running) do
       fill(market.id, period)
     end
   end
+  
+  BinanceTrading.lock.status_new_or_partially_filled.each do |item|
+    # If you only plan on touching public API endpoints, you can forgo any arguments
+    client = Binance::Client::REST.new
+    # Otherwise provide an api_key and secret_key as keyword arguments
+    client = Binance::Client::REST.new api_key: ::Binance::BinanceShareFunction.get_apikey, secret_key: ::Binance::BinanceShareFunction.get_apisecret
+
+    query_order = client.query_order symbol: item.market.upcase, orderId: item.order_id
+
+    if query_order["status"].present?
+      item.status = query_order["status"]
+
+      item.save
+    else
+      ::Binance::BinanceShareFunction.fatal(query_order)
+    end
+  end
 
   sleep 15
 end
